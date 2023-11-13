@@ -112,4 +112,16 @@ public class ElasticsearchService
             Console.WriteLine(exception.Message);
         }
     }
+
+    public async Task SearchAsync(SearchQuery searchQuery)
+    {
+        var result = await _elasticsearchClient.SearchAsync<ElasticDocument>(d => d
+            .Index(_indexSettings.IndexName)
+            .Query(qd => qd.MultiMatch(md => md
+                .Type(searchQuery.Type)
+                .Fields(searchQuery.Fields)
+                .Query(searchQuery.Query))));
+
+        int asd = 3;
+    }
 }
