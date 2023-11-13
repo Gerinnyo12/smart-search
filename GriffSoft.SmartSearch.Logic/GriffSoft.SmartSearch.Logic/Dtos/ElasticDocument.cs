@@ -7,4 +7,4 @@ internal record ElasticDocument(
     string Table, 
     string Column, 
     Dictionary<string, object> Keys, 
-    string Value);
+    object Value);
