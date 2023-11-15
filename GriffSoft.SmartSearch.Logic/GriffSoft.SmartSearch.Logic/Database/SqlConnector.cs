@@ -17,7 +17,7 @@ internal class SqlConnector : IDatabaseConnector
         _connectionOpenerTask = _sqlConnection.OpenAsync();
     }
 
-    public async Task<DbConnection> GetConnectionAsync()
+    private async Task<DbConnection> GetConnectionAsync()
     {
         await _connectionOpenerTask;
         return _sqlConnection;

@@ -28,7 +28,7 @@ internal class ElasticQueryBuilder : IQueryBuilder
         _elasticQueryParameters = elasticQueryParameters;
     }
 
-    public async Task<DbCommand> BuildQueryForPage(int page)
+    public async Task<DbCommand> BuildQueryForPageAsync(int page)
     {
         var connection = await _databaseConnector.Connection;
         if (connection is not SqlConnection sqlConnection)

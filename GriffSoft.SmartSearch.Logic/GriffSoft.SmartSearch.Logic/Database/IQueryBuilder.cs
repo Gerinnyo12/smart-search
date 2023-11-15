@@ -4,5 +4,5 @@ using System.Threading.Tasks;
 namespace GriffSoft.SmartSearch.Logic.Database;
 internal interface IQueryBuilder
 {
-    Task<DbCommand> BuildQueryForPage(int page);
+    Task<DbCommand> BuildQueryForPageAsync(int page);
 }

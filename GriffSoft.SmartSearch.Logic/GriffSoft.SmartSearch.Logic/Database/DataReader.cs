@@ -25,7 +25,7 @@ internal class DataReader<T>
 
         while (hasUnprocessedData)
         {
-            using var query = await _queryBuilder.BuildQueryForPage(page);
+            using var query = await _queryBuilder.BuildQueryForPageAsync(page);
             var documents = await QueryDocumentsAsync(query);
             await endOfBatchAction(documents);
 

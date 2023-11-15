@@ -9,7 +9,10 @@ using GriffSoft.SmartSearch.Logic.Database;
 using GriffSoft.SmartSearch.Logic.Mappers;
 
 namespace GriffSoft.SmartSearch.Logic.Services;
-// TODO INTERNAL
+/// <summary>
+/// TODO
+/// </summary>
+/// <remarks>Has to be singleton</remarks>
 public class ElasticsearchService
 {
     private readonly ElasticsearchClient _elasticsearchClient;

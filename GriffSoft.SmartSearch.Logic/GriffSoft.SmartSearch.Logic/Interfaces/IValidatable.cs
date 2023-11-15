@@ -1,7 +1,5 @@
-﻿namespace GriffSoft.SmartSearch.Logic.Interfaces
+﻿namespace GriffSoft.SmartSearch.Logic.Interfaces;
+internal interface IValidatable
 {
-    internal interface IValidatable
-    {
-        void InvalidateIfIncorrect();
-    }
+    void InvalidateIfIncorrect();
 }
