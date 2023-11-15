@@ -37,13 +37,15 @@ internal class ElasticMapper : IDataReaderMapper<ElasticDocument>
 
     private ElasticDocument MapDataToDocument(SqlDataReader sqlDataReader)
     {
-        return new ElasticDocument(
-            _elasticMapperParameters.Server,
-            _elasticMapperParameters.Database,
-            _elasticMapperParameters.Table,
-            _elasticMapperParameters.Column,
-            MapIds(sqlDataReader),
-            sqlDataReader[_elasticMapperParameters.Column]);
+        return new ElasticDocument
+        {
+            Server = _elasticMapperParameters.Server,
+            Database = _elasticMapperParameters.Database,
+            Table = _elasticMapperParameters.Table,
+            Column = _elasticMapperParameters.Column,
+            Keys = MapIds(sqlDataReader),
+            Value = sqlDataReader[_elasticMapperParameters.Column],
+        };
     }
 
     private Dictionary<string, object> MapIds(SqlDataReader sqlDataReader)

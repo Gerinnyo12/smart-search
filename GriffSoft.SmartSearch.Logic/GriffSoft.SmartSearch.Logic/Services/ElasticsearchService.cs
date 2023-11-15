@@ -7,13 +7,15 @@ using System;
 using System.Linq;
 using GriffSoft.SmartSearch.Logic.Database;
 using GriffSoft.SmartSearch.Logic.Mappers;
+using GriffSoft.SmartSearch.Logic.Extensions;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 
 namespace GriffSoft.SmartSearch.Logic.Services;
 /// <summary>
 /// TODO
 /// </summary>
 /// <remarks>Has to be singleton</remarks>
-public class ElasticsearchService
+public class ElasticsearchService : ISearchService
 {
     private readonly ElasticsearchClient _elasticsearchClient;
     private readonly IndexSettings _indexSettings;
@@ -86,7 +88,7 @@ public class ElasticsearchService
         if (!indexResponse.ShardsAcknowledged)
         {
             // TODO SPECIFIC EXCEPTION
-            throw new Exception($"Error occured while trying to create {_indexSettings.IndexName}.");
+            throw new Exception($"Error occurred while trying to create {_indexSettings.IndexName}.");
         }
 
         // TODO LOG
@@ -116,15 +118,22 @@ public class ElasticsearchService
         }
     }
 
-    public async Task SearchAsync(SearchQuery searchQuery)
+    public async Task<SearchResult<T>> SearchAsync<T>(PaginatedSearchQuery paginatedSearchQuery) where T : class
     {
-        var result = await _elasticsearchClient.SearchAsync<ElasticDocument>(d => d
+        var searchResponse = await _elasticsearchClient.SearchAsync<T>(rd => rd
             .Index(_indexSettings.IndexName)
-            .Query(qd => qd.MultiMatch(md => md
-                .Type(searchQuery.Type)
-                .Fields(searchQuery.Fields)
-                .Query(searchQuery.Query))));
+            .Query(qd => qd.MultiMatch(mqd => mqd
+                .Type(TextQueryType.BoolPrefix)
+                .Fields(new[] { "value", "value._2gram", "value._3gram" })
+                .Query(paginatedSearchQuery.Query)))
+            .Size(paginatedSearchQuery.Size)
+            .From(paginatedSearchQuery.Offset));
 
-        int asd = 3;
+        if (!searchResponse.IsValidResponse)
+        {
+            throw new Exception("An error occurred trying to perform search.");
+        }
+
+        return searchResponse.ToSearchResult();
     }
 }
