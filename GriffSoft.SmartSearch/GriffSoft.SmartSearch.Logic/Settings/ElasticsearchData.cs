@@ -1,10 +1,8 @@
-﻿using GriffSoft.SmartSearch.Logic.Interfaces;
-
-using System;
+﻿using System;
 using System.Linq;
 
 namespace GriffSoft.SmartSearch.Logic.Settings;
-public class DataInitializerSettings : IValidatable
+public class ElasticsearchData : IValidatable
 {
     public required int BatchSize { get; init; }
 

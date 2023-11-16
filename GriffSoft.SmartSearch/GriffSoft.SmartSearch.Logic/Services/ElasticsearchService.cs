@@ -9,6 +9,7 @@ using GriffSoft.SmartSearch.Logic.Database;
 using GriffSoft.SmartSearch.Logic.Mappers;
 using GriffSoft.SmartSearch.Logic.Extensions;
 using Elastic.Clients.Elasticsearch.QueryDsl;
+using GriffSoft.SmartSearch.Logic.Configurators;
 
 namespace GriffSoft.SmartSearch.Logic.Services;
 /// <summary>
@@ -17,25 +18,40 @@ namespace GriffSoft.SmartSearch.Logic.Services;
 /// <remarks>Has to be singleton</remarks>
 public class ElasticsearchService : ISearchService
 {
+    private readonly IndexConfigurator _indexConfigurator;
+    private readonly ElasticsearchData _elasticsearchData;
     private readonly ElasticsearchClient _elasticsearchClient;
-    private readonly IndexSettings _indexSettings;
-    private readonly DataInitializerSettings _dataInitializerSettings;
-    private readonly ElasticClientSettings _elasticClientSettings;
 
-    public ElasticsearchService(ElasticClientSettings elasticClientSettings, IndexSettings indexSettings,
-        DataInitializerSettings dataInitializerSettings)
+    public ElasticsearchService(IndexSettings indexSettings,
+        ElasticsearchData elasticsearchData, ElasticClientSettings elasticClientSettings)
     {
-        _elasticClientSettings = elasticClientSettings;
-        _elasticsearchClient = new ElasticsearchClient(_elasticClientSettings.Settings);
-        _indexSettings = indexSettings;
-        _dataInitializerSettings = dataInitializerSettings;
+        InvalidateIncorrectSettings(indexSettings);
+        InvalidateIncorrectSettings(elasticClientSettings);
+        InvalidateIncorrectSettings(elasticsearchData);
+
+        _indexConfigurator = new IndexConfigurator(indexSettings);
+        _elasticsearchData = elasticsearchData;
+        var elasticsearchClientConfigurator = new ElasticsearchClientConfigurator(elasticClientSettings);
+        _elasticsearchClient = new ElasticsearchClient(elasticsearchClientConfigurator.ClientSettings);
     }
 
-    public async Task InitializeDataAsync()
+    private void InvalidateIncorrectSettings(IValidatable settings) => settings.InvalidateIfIncorrect();
+
+    public async Task EnsureAvailableAsync()
+    {
+        var pingResponse = await _elasticsearchClient.PingAsync();
+        if (!pingResponse.IsValidResponse)
+        {
+            string exceptionMessage = pingResponse.ApiCallDetails.OriginalException?.Message ?? "Unknown";
+            throw new Exception($"Elastic client is not working. The reason is: {exceptionMessage}");
+        }
+    }
+
+    public async Task PrepareDataAsync()
     {
         await CreateIndexIfAbsentAsync();
 
-        foreach (var elasticTarget in _dataInitializerSettings.ElasticTargets)
+        foreach (var elasticTarget in _elasticsearchData.ElasticTargets)
         {
             using var sqlConnector = new SqlConnector(elasticTarget.ConnectionString);
 
@@ -48,7 +64,7 @@ public class ElasticsearchService : ISearchService
                         Column = column,
                         Keys = elasticTable.Keys,
                         Table = elasticTable.Table,
-                        BatchSize = _dataInitializerSettings.BatchSize,
+                        BatchSize = _elasticsearchData.BatchSize,
                     };
                     var queryBuilder = new ElasticQueryBuilder(sqlConnector, elasticQueryParameters);
 
@@ -73,7 +89,7 @@ public class ElasticsearchService : ISearchService
 
     private async Task CreateIndexIfAbsentAsync()
     {
-        var existsResponse = await _elasticsearchClient.Indices.ExistsAsync(_indexSettings.IndexName);
+        var existsResponse = await _elasticsearchClient.Indices.ExistsAsync(_indexConfigurator.IndexName);
         if (!existsResponse.Exists)
         {
             await CreateIndexAsync();
@@ -83,16 +99,16 @@ public class ElasticsearchService : ISearchService
     private async Task CreateIndexAsync()
     {
         var indexResponse = await _elasticsearchClient
-            .Indices.CreateAsync(_indexSettings.IndexDescriptor);
+            .Indices.CreateAsync(_indexConfigurator.IndexDescriptor);
 
         if (!indexResponse.ShardsAcknowledged)
         {
             // TODO SPECIFIC EXCEPTION
-            throw new Exception($"Error occurred while trying to create {_indexSettings.IndexName}.");
+            throw new Exception($"Error occurred while trying to create {_indexConfigurator.IndexName}.");
         }
 
         // TODO LOG
-        Console.WriteLine($"A {_indexSettings.IndexName} nevu index sikeresen letrehozva.");
+        Console.WriteLine($"A {_indexConfigurator.IndexName} nevu index sikeresen letrehozva.");
     }
 
     private async Task SafeIndexManyAsync(IEnumerable<ElasticDocument> documents)
@@ -105,11 +121,12 @@ public class ElasticsearchService : ISearchService
         // TODO
         try
         {
-            var bulkResponse = await _elasticsearchClient.IndexManyAsync(documents, _indexSettings.IndexName);
+            var bulkRequestDescriptor = _indexConfigurator.CreateBulkUpsertDescriptor(documents);
+            var bulkResponse = await _elasticsearchClient.BulkAsync(bulkRequestDescriptor);
             if (!bulkResponse.IsValidResponse)
             {
                 // TODO GET THE ERROR MESSAGE
-                throw new Exception($"Error occurred while adding documents to {_indexSettings.IndexName}.");
+                throw new Exception($"Error occurred while adding documents to {_indexConfigurator.IndexName}.");
             }
         }
         catch (Exception exception)
@@ -121,7 +138,7 @@ public class ElasticsearchService : ISearchService
     public async Task<SearchResult<T>> SearchAsync<T>(PaginatedSearchQuery paginatedSearchQuery) where T : class
     {
         var searchResponse = await _elasticsearchClient.SearchAsync<T>(rd => rd
-            .Index(_indexSettings.IndexName)
+            .Index(_indexConfigurator.IndexName)
             .Query(qd => qd.MultiMatch(mqd => mqd
                 .Type(TextQueryType.BoolPrefix)
                 .Fields(new[] { "value", "value._2gram", "value._3gram" })

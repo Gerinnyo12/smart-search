@@ -1,32 +1,28 @@
-using GriffSoft.SmartSearch.Frontend.Data;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using GriffSoft.SmartSearch.Frontend.Extensions;
+using GriffSoft.SmartSearch.Frontend.Providers;
+using GriffSoft.SmartSearch.Logic.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+builder.RegisterOption<IndexSettings>(nameof(IndexSettings));
+builder.RegisterOption<ElasticClientSettings>(nameof(ElasticClientSettings));
+builder.RegisterOption<ElasticsearchData>(nameof(ElasticsearchData));
+
+builder.Services.AddSingleton<SearchServiceProvider>();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
+await app.InitializeAsync();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
 app.Run();

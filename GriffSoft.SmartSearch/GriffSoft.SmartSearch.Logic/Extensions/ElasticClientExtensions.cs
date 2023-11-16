@@ -2,6 +2,8 @@
 
 using GriffSoft.SmartSearch.Logic.Dtos;
 
+using System.Linq;
+
 namespace GriffSoft.SmartSearch.Logic.Extensions;
 internal static class ElasticClientExtensions
 {
@@ -10,7 +12,7 @@ internal static class ElasticClientExtensions
         return new SearchResult<T>
         {
             HitCount = searchResponse.Documents.Count,
-            Hits = searchResponse.Documents
+            Hits = searchResponse.Documents.AsQueryable(),
         };
     }
 }

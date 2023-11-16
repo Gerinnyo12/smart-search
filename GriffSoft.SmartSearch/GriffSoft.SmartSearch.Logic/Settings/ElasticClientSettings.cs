@@ -1,9 +1,4 @@
-﻿using Elastic.Clients.Elasticsearch;
-using Elastic.Transport;
-
-using GriffSoft.SmartSearch.Logic.Interfaces;
-
-using System;
+﻿using System;
 
 namespace GriffSoft.SmartSearch.Logic.Settings;
 public class ElasticClientSettings : IValidatable
@@ -15,17 +10,6 @@ public class ElasticClientSettings : IValidatable
     public required string Username { get; init; }
 
     public required string Password { get; init; }
-
-    public ElasticsearchClientSettings Settings => BuildSettings();
-
-    private ElasticsearchClientSettings BuildSettings()
-    {
-        var settings = new ElasticsearchClientSettings(new Uri(Url))
-            .CertificateFingerprint(Fingerprint)
-            .Authentication(new BasicAuthentication(Username, Password));
-
-        return settings;
-    }
 
     public void InvalidateIfIncorrect()
     {

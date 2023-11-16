@@ -6,7 +6,9 @@ namespace GriffSoft.SmartSearch.Logic.Services;
 public interface ISearchService
 {
     // TODO DOCCOMMENT ABOUT EXCEPTION THROWING
-    Task InitializeDataAsync();
+    Task EnsureAvailableAsync();
+
+    Task PrepareDataAsync();
 
     Task<SearchResult<T>> SearchAsync<T>(PaginatedSearchQuery paginatedSearchQuery) where T : class;
 }

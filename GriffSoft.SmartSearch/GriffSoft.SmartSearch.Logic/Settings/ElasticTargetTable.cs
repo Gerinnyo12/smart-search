@@ -1,6 +1,4 @@
-﻿using GriffSoft.SmartSearch.Logic.Interfaces;
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
