@@ -137,14 +137,20 @@ public class ElasticsearchService : ISearchService
 
     public async Task<SearchResult<T>> SearchAsync<T>(PaginatedSearchQuery paginatedSearchQuery) where T : class
     {
+        if (paginatedSearchQuery is not ElasticsearchQuery<T> elasticsearchQuery)
+        {
+            throw new ArgumentException($"{nameof(paginatedSearchQuery)} is not an instance of {nameof(ElasticsearchQuery<T>)}");
+        }
+
         var searchResponse = await _elasticsearchClient.SearchAsync<T>(rd => rd
             .Index(_indexConfigurator.IndexName)
             .Query(qd => qd.MultiMatch(mqd => mqd
                 .Type(TextQueryType.BoolPrefix)
-                .Fields(new[] { "value", "value._2gram", "value._3gram" })
-                .Query(paginatedSearchQuery.Query)))
-            .Size(paginatedSearchQuery.Size)
-            .From(paginatedSearchQuery.Offset));
+                .Fields(new[] { "Value", "Value._2gram", "Value._3gram" })
+                .Query(elasticsearchQuery.Query)))
+            .Sort(elasticsearchQuery.SortDescriptor)
+            .Size(elasticsearchQuery.Size)
+            .From(elasticsearchQuery.Offset));
 
         if (!searchResponse.IsValidResponse)
         {

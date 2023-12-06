@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace GriffSoft.SmartSearch.Logic.Dtos;
 public class SearchResult<T>
 {
-    public required int HitCount { get; init; }
+    public required long TotalCount { get; init; }
 
-    public required IQueryable<T> Hits { get; init; }
+    public required IReadOnlyCollection<T> Hits { get; init; }
 }

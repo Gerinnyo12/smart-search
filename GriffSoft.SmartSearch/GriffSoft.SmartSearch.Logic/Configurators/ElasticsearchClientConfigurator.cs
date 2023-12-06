@@ -20,6 +20,7 @@ internal class ElasticsearchClientConfigurator
     private ElasticsearchClientSettings CreateClientSettings()
     {
         var settings = new ElasticsearchClientSettings(new Uri(_elasticClientSettings.Url))
+            .DefaultFieldNameInferrer(f => f)
             .CertificateFingerprint(_elasticClientSettings.Fingerprint)
             .Authentication(new BasicAuthentication(_elasticClientSettings.Username, _elasticClientSettings.Password));
 

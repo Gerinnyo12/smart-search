@@ -11,8 +11,8 @@ internal static class ElasticClientExtensions
     {
         return new SearchResult<T>
         {
-            HitCount = searchResponse.Documents.Count,
-            Hits = searchResponse.Documents.AsQueryable(),
+            TotalCount = searchResponse.Total,
+            Hits = searchResponse.Documents,
         };
     }
 }

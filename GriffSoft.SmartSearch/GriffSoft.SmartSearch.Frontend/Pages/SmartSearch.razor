@@ -1,7 +1,21 @@
 ﻿@page "/"
+@using GriffSoft.SmartSearch.Frontend.Providers
+@using GriffSoft.SmartSearch.Logic.Dtos
+@using Microsoft.AspNetCore.Components.QuickGrid
 
 <PageTitle>Smart Search</PageTitle>
 
-<h1>Hello, world!</h1>
+<p>Total: <strong>@TotalCount</strong></p>
 
-Welcome to your new app.
+<div class="grid" tabindex="-1">
+    <QuickGrid ItemsProvider="@ElasticDocumentsProvider" Virtualize="true" @ref=Grid>
+        <TemplateColumn ></TemplateColumn>
+        <PropertyColumn Property="@(d => d.Value)" />
+        <PropertyColumn Property="@(d => d.Server)" 
+            Sortable=true IsDefaultSortColumn=true InitialSortDirection="SortDirection.Ascending" />
+        <PropertyColumn Property="@(d => d.Database)" Sortable=true />
+        <PropertyColumn Property="@(d => d.Table)" Sortable=true />
+        <PropertyColumn Property="@(d => d.Column)" Sortable=true />
+        @* <PropertyColumn Property="@(d => d.Keys)" /> *@
+    </QuickGrid>
+</div>
