@@ -12,7 +12,9 @@ public class ElasticDocument
 
     public required string Column { get; init; }
 
+    public required int Type { get; init; }
+
     public required Dictionary<string, object> Keys { get; init; }
 
-    public required object Value { get; init; }
+    public required string Value { get; init; }
 }

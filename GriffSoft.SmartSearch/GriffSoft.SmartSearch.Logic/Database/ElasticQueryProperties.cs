@@ -1,5 +1,5 @@
-﻿namespace GriffSoft.SmartSearch.Logic.Dtos;
-internal class ElasticQueryParameters
+﻿namespace GriffSoft.SmartSearch.Logic.Database;
+internal class ElasticQueryProperties
 {
     public required string[] Keys { get; init; }
 

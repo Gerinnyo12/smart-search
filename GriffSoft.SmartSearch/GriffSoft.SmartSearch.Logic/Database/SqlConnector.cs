@@ -1,15 +1,14 @@
 ﻿using Microsoft.Data.SqlClient;
 
-using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace GriffSoft.SmartSearch.Logic.Database;
-internal class SqlConnector : IDatabaseConnector
+internal class SqlConnector : IDatabaseConnector<SqlConnection>
 {
     private readonly SqlConnection _sqlConnection;
     private readonly Task _connectionOpenerTask;
 
-    public Task<DbConnection> Connection => GetConnectionAsync();
+    public Task<SqlConnection> Connection => GetConnectionAsync();
 
     public SqlConnector(string connectionString)
     {
@@ -17,7 +16,7 @@ internal class SqlConnector : IDatabaseConnector
         _connectionOpenerTask = _sqlConnection.OpenAsync();
     }
 
-    private async Task<DbConnection> GetConnectionAsync()
+    private async Task<SqlConnection> GetConnectionAsync()
     {
         await _connectionOpenerTask;
         return _sqlConnection;

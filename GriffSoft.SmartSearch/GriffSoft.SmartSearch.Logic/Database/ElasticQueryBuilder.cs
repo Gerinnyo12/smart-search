@@ -1,14 +1,10 @@
-﻿using GriffSoft.SmartSearch.Logic.Dtos;
+﻿using Microsoft.Data.SqlClient;
 
-using Microsoft.Data.SqlClient;
-
-using System;
-using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace GriffSoft.SmartSearch.Logic.Database;
-internal class ElasticQueryBuilder : IQueryBuilder
+internal class ElasticQueryBuilder : IDatabaseQueryBuilder<SqlCommand>
 {
     private const string SqlCommand =
         "SELECT {0} " +
@@ -19,25 +15,20 @@ internal class ElasticQueryBuilder : IQueryBuilder
         "OFFSET {5} ROWS " +
         "FETCH NEXT {6} ROWS ONLY;";
 
-    private readonly IDatabaseConnector _databaseConnector;
-    private readonly ElasticQueryParameters _elasticQueryParameters;
+    private readonly SqlConnector _sqlConnector;
+    private readonly ElasticQueryProperties _elasticQueryProperties;
 
-    public ElasticQueryBuilder(IDatabaseConnector databaseConnector, ElasticQueryParameters elasticQueryParameters)
+    public ElasticQueryBuilder(SqlConnector sqlConnector, ElasticQueryProperties elasticQueryProperties)
     {
-        _databaseConnector = databaseConnector;
-        _elasticQueryParameters = elasticQueryParameters;
+        _sqlConnector = sqlConnector;
+        _elasticQueryProperties = elasticQueryProperties;
     }
 
-    public async Task<DbCommand> BuildQueryForPageAsync(int page)
+    public async Task<SqlCommand> BuildQueryForPageAsync(int page)
     {
-        var connection = await _databaseConnector.Connection;
-        if (connection is not SqlConnection sqlConnection)
-        {
-            throw new Exception($"The provided connection is not an instance of {nameof(SqlConnection)}");
-        }
-
-        int offset = _elasticQueryParameters.BatchSize * page;
-        string paramaterisedSqlQuery = ParamateriseSqlQuery(_elasticQueryParameters.BatchSize, offset);
+        var sqlConnection = await _sqlConnector.Connection;
+        int offset = _elasticQueryProperties.BatchSize * page;
+        string paramaterisedSqlQuery = ParamateriseSqlQuery(_elasticQueryProperties.BatchSize, offset);
         var sqlCommand = new SqlCommand
         {
             Connection = sqlConnection,
@@ -49,10 +40,10 @@ internal class ElasticQueryBuilder : IQueryBuilder
 
     private string ParamateriseSqlQuery(int batchSize, int offset)
     {
-        string bracketisedCommaSeparatedKeysNames = string.Join(", ", _elasticQueryParameters.Keys.Select(Bracketise));
-        string bracketisedColumnName = Bracketise(_elasticQueryParameters.Column);
+        string bracketisedCommaSeparatedKeysNames = string.Join(", ", _elasticQueryProperties.Keys.Select(Bracketise));
+        string bracketisedColumnName = Bracketise(_elasticQueryProperties.Column);
         string bracketisedColumnNamesToSelect = $"{bracketisedCommaSeparatedKeysNames}, {bracketisedColumnName}";
-        string bracketisedTableName = Bracketise(_elasticQueryParameters.Table);
+        string bracketisedTableName = Bracketise(_elasticQueryProperties.Table);
 
         return string.Format(SqlCommand,
             bracketisedColumnNamesToSelect,

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 namespace GriffSoft.SmartSearch.Logic.Database;
-internal interface IQueryBuilder
+internal interface IDatabaseQueryBuilder<T> where T : DbCommand
 {
-    Task<DbCommand> BuildQueryForPageAsync(int page);
+    Task<T> BuildQueryForPageAsync(int page);
 }

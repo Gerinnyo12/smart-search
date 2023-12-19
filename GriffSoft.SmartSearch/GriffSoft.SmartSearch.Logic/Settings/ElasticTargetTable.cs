@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GriffSoft.SmartSearch.Logic.Dtos.Enums;
+
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -8,6 +10,8 @@ public class ElasticTargetTable : IValidatable
     private const string SqlValidatorRegex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
 
     public required string Table { get; init; }
+
+    public required TableType Type { get; init; }
 
     public required string[] Columns { get; init; }
 
@@ -23,6 +27,11 @@ public class ElasticTargetTable : IValidatable
         if (!Regex.IsMatch(Table, SqlValidatorRegex))
         {
             throw new Exception($"{nameof(Table)} is not a valid sql table name.");
+        }
+
+        if (Type == TableType.Undefined)
+        {
+            throw new Exception($"{nameof(Type)} must be provided.");
         }
 
         if (!Columns.Any())

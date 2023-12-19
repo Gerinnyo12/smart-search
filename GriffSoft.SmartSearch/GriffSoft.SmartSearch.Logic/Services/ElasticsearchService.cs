@@ -8,31 +8,32 @@ using System.Linq;
 using GriffSoft.SmartSearch.Logic.Database;
 using GriffSoft.SmartSearch.Logic.Mappers;
 using GriffSoft.SmartSearch.Logic.Extensions;
-using Elastic.Clients.Elasticsearch.QueryDsl;
 using GriffSoft.SmartSearch.Logic.Configurators;
+using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.SearchRequest;
+using GriffSoft.SmartSearch.Logic.Appliers;
 
 namespace GriffSoft.SmartSearch.Logic.Services;
 /// <summary>
 /// TODO
 /// </summary>
 /// <remarks>Has to be singleton</remarks>
-public class ElasticsearchService : ISearchService
+public class ElasticSearchService : ISearchService<ElasticDocument>
 {
-    private readonly IndexConfigurator _indexConfigurator;
+    private readonly ElasticIndexConfigurator _elasticIndexConfigurator;
     private readonly ElasticsearchData _elasticsearchData;
     private readonly ElasticsearchClient _elasticsearchClient;
 
-    public ElasticsearchService(IndexSettings indexSettings,
+    public ElasticSearchService(IndexSettings indexSettings,
         ElasticsearchData elasticsearchData, ElasticClientSettings elasticClientSettings)
     {
         InvalidateIncorrectSettings(indexSettings);
         InvalidateIncorrectSettings(elasticClientSettings);
         InvalidateIncorrectSettings(elasticsearchData);
 
-        _indexConfigurator = new IndexConfigurator(indexSettings);
+        _elasticIndexConfigurator = new ElasticIndexConfigurator(indexSettings);
         _elasticsearchData = elasticsearchData;
-        var elasticsearchClientConfigurator = new ElasticsearchClientConfigurator(elasticClientSettings);
-        _elasticsearchClient = new ElasticsearchClient(elasticsearchClientConfigurator.ClientSettings);
+        var elasticClientConfigurator = new ElasticClientConfigurator(elasticClientSettings);
+        _elasticsearchClient = elasticClientConfigurator.CreateClient();
     }
 
     private void InvalidateIncorrectSettings(IValidatable settings) => settings.InvalidateIfIncorrect();
@@ -44,6 +45,54 @@ public class ElasticsearchService : ISearchService
         {
             string exceptionMessage = pingResponse.ApiCallDetails.OriginalException?.Message ?? "Unknown";
             throw new Exception($"Elastic client is not working. The reason is: {exceptionMessage}");
+        }
+    }
+
+    private async Task SafeIndexManyAsync(IEnumerable<ElasticDocument> documents)
+    {
+        if (!documents.Any())
+        {
+            return;
+        }
+
+        // TODO
+        try
+        {
+            var bulkRequestDescriptor = _elasticIndexConfigurator.CreateBulkUpsertDescriptor(documents);
+            var bulkResponse = await _elasticsearchClient.BulkAsync(bulkRequestDescriptor);
+            if (!bulkResponse.IsValidResponse)
+            {
+                // TODO GET THE ERROR MESSAGE
+                throw new Exception($"Error occurred while adding documents to {_elasticIndexConfigurator.IndexName}.");
+            }
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception.Message);
+        }
+    }
+
+    private async Task CreateIndexAsync()
+    {
+        var indexResponse = await _elasticsearchClient
+            .Indices.CreateAsync(_elasticIndexConfigurator.IndexDescriptor);
+
+        if (!indexResponse.ShardsAcknowledged)
+        {
+            // TODO SPECIFIC EXCEPTION
+            throw new Exception($"Error occurred while trying to create {_elasticIndexConfigurator.IndexName}.");
+        }
+
+        // TODO LOG
+        Console.WriteLine($"A {_elasticIndexConfigurator.IndexName} nevu index sikeresen letrehozva.");
+    }
+
+    private async Task CreateIndexIfAbsentAsync()
+    {
+        var existsResponse = await _elasticsearchClient.Indices.ExistsAsync(_elasticIndexConfigurator.IndexName);
+        if (!existsResponse.Exists)
+        {
+            await CreateIndexAsync();
         }
     }
 
@@ -59,99 +108,43 @@ public class ElasticsearchService : ISearchService
             {
                 foreach (var column in elasticTable.Columns)
                 {
-                    var elasticQueryParameters = new ElasticQueryParameters
+                    var elasticQueryProperties = new ElasticQueryProperties
                     {
                         Column = column,
                         Keys = elasticTable.Keys,
                         Table = elasticTable.Table,
                         BatchSize = _elasticsearchData.BatchSize,
                     };
-                    var queryBuilder = new ElasticQueryBuilder(sqlConnector, elasticQueryParameters);
+                    var queryBuilder = new ElasticQueryBuilder(sqlConnector, elasticQueryProperties);
 
-                    var elasticMapperParameters = new ElasticMapperParameters
+                    var elasticMapperProperites = new ElasticMapperProperties
                     {
                         Server = elasticTarget.Server,
                         Database = elasticTarget.Database,
                         Table = elasticTable.Table,
+                        Type = elasticTable.Type,
                         Column = column,
                         Keys = elasticTable.Keys,
                     };
-                    var mapper = new ElasticMapper(elasticMapperParameters);
 
-                    var dataReader = new DataReader<ElasticDocument>(queryBuilder, mapper);
+                    var mapper = new ElasticReaderMapper(elasticMapperProperites);
+                    var dataReader = new SqlDataReader(queryBuilder, mapper);
                     await dataReader.ProcessDataInBatchesAsync(SafeIndexManyAsync);
                 }
             }
         }
-
         // TODO LOG
     }
 
-    private async Task CreateIndexIfAbsentAsync()
+    public async Task<SearchResult<ElasticDocument>> SearchAsync(SearchRequest searchRequest)
     {
-        var existsResponse = await _elasticsearchClient.Indices.ExistsAsync(_indexConfigurator.IndexName);
-        if (!existsResponse.Exists)
-        {
-            await CreateIndexAsync();
-        }
-    }
-        
-    private async Task CreateIndexAsync()
-    {
-        var indexResponse = await _elasticsearchClient
-            .Indices.CreateAsync(_indexConfigurator.IndexDescriptor);
+        var requestApplier = new RequestApplier(searchRequest);
+        var searchRequestDescriptor = new SearchRequestDescriptor<ElasticDocument>();
+        searchRequestDescriptor = requestApplier
+            .ApplyRequest(searchRequestDescriptor)
+            .Index(_elasticIndexConfigurator.IndexName);
 
-        if (!indexResponse.ShardsAcknowledged)
-        {
-            // TODO SPECIFIC EXCEPTION
-            throw new Exception($"Error occurred while trying to create {_indexConfigurator.IndexName}.");
-        }
-
-        // TODO LOG
-        Console.WriteLine($"A {_indexConfigurator.IndexName} nevu index sikeresen letrehozva.");
-    }
-
-    private async Task SafeIndexManyAsync(IEnumerable<ElasticDocument> documents)
-    {
-        if (!documents.Any())
-        {
-            return;
-        }
-
-        // TODO
-        try
-        {
-            var bulkRequestDescriptor = _indexConfigurator.CreateBulkUpsertDescriptor(documents);
-            var bulkResponse = await _elasticsearchClient.BulkAsync(bulkRequestDescriptor);
-            if (!bulkResponse.IsValidResponse)
-            {
-                // TODO GET THE ERROR MESSAGE
-                throw new Exception($"Error occurred while adding documents to {_indexConfigurator.IndexName}.");
-            }
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception.Message);
-        }
-    }
-
-    public async Task<SearchResult<T>> SearchAsync<T>(PaginatedSearchQuery paginatedSearchQuery) where T : class
-    {
-        if (paginatedSearchQuery is not ElasticsearchQuery<T> elasticsearchQuery)
-        {
-            throw new ArgumentException($"{nameof(paginatedSearchQuery)} is not an instance of {nameof(ElasticsearchQuery<T>)}");
-        }
-
-        var searchResponse = await _elasticsearchClient.SearchAsync<T>(rd => rd
-            .Index(_indexConfigurator.IndexName)
-            .Query(qd => qd.MultiMatch(mqd => mqd
-                .Type(TextQueryType.BoolPrefix)
-                .Fields(new[] { "Value", "Value._2gram", "Value._3gram" })
-                .Query(elasticsearchQuery.Query)))
-            .Sort(elasticsearchQuery.SortDescriptor)
-            .Size(elasticsearchQuery.Size)
-            .From(elasticsearchQuery.Offset));
-
+        var searchResponse = await _elasticsearchClient.SearchAsync(searchRequestDescriptor);
         if (!searchResponse.IsValidResponse)
         {
             throw new Exception("An error occurred trying to perform search.");

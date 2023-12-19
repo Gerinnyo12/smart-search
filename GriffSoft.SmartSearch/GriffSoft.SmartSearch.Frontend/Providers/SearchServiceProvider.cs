@@ -1,23 +1,31 @@
-﻿using Elastic.Clients.Elasticsearch;
-
+﻿using GriffSoft.SmartSearch.Logic.Builders;
 using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Enums;
 using GriffSoft.SmartSearch.Logic.Services;
 using GriffSoft.SmartSearch.Logic.Settings;
 
 using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.Extensions.Options;
 
+using SortDirection = GriffSoft.SmartSearch.Logic.Dtos.Enums.SortDirection;
+
 namespace GriffSoft.SmartSearch.Frontend.Providers;
 
 public class SearchServiceProvider
 {
-    private readonly ElasticsearchService _elasticsearchService;
+    public SearchFilter SearchFilter { get; set; } = string.Empty;
+
+    public Dictionary<string, SearchAnd> SearchAnds { get; set;} = [];
+
+    public Dictionary<TableType, SearchOr> SearchOrs { get; set; } = [];
+
+    private readonly ElasticSearchService _elasticsearchService;
 
     public SearchServiceProvider(IOptions<IndexSettings> indexSettings,
         IOptions<ElasticsearchData> elasticsearchData,
         IOptions<ElasticClientSettings> elasticClientSettings)
     {
-        _elasticsearchService = new ElasticsearchService(indexSettings.Value,
+        _elasticsearchService = new ElasticSearchService(indexSettings.Value,
             elasticsearchData.Value, elasticClientSettings.Value);
     }
 
@@ -25,50 +33,32 @@ public class SearchServiceProvider
 
     public Task PrepareDataAsync() => _elasticsearchService.PrepareDataAsync();
 
-    public async Task<IEnumerable<string>> SearchAsYouTypeQueryAsync(string query)
-    {
-        var sortDescriptor = new SortOptionsDescriptor<ElasticDocument>();
-        sortDescriptor.Field(d => d.Value, new FieldSort
-        {
-            Order = SortOrder.Asc
-        });
-
-        const int firstTenHits = 10;
-        var elasticsearchQuery = new ElasticsearchQuery<ElasticDocument>
-        {
-            Query = query,
-            SortDescriptor = sortDescriptor,
-            Size = firstTenHits,
-            Offset = 0,
-        };
-
-        var searchResult = await _elasticsearchService.SearchAsync<ElasticDocument>(elasticsearchQuery);
-        return searchResult.Hits
-            .Where(h => h.Value != null)
-            .Select(h => h.Value!.ToString()!);
-    }
+    private static SortDirection GetSortDirection(Microsoft.AspNetCore.Components.QuickGrid.SortDirection direction) =>
+        direction == Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Ascending
+            ? SortDirection.Ascending : SortDirection.Descending;
 
     public Task<SearchResult<ElasticDocument>> SearchAsync(GridItemsProviderRequest<ElasticDocument> request)
     {
-        var sortProperties = request.GetSortByProperties();
-        var sortProperty = sortProperties.First();
-        string sortPropertyName = sortProperty.PropertyName;
-        SortDirection sortPropertyDirection = sortProperty.Direction;
+        var searchAnds = SearchAnds.Values.ToArray();
+        var searchOrs = SearchOrs.Values.ToArray();
+        var searchSorts = request.GetSortByProperties()
+            .Select(p => new SearchSort
+            {
+                FieldName = p.PropertyName,
+                SortDirection = GetSortDirection(p.Direction),
+            })
+            .ToArray();
+        
+        var searchRequestBuilder = new SearchRequestBuilder();
+        var searchRequest = searchRequestBuilder
+            .Filter(SearchFilter)
+            .Ands(searchAnds)
+            .Ors(searchOrs)
+            .Sorts(searchSorts)
+            .Take(request.Count ?? 15)
+            .Skip(request.StartIndex)
+            .Build();
 
-        var sortDescriptor = new SortOptionsDescriptor<ElasticDocument>();
-        sortDescriptor.Field(sortPropertyName, new FieldSort
-        {
-            Order = sortPropertyDirection == SortDirection.Ascending ? SortOrder.Asc : SortOrder.Desc,
-        });
-
-        var searchQuery = new ElasticsearchQuery<ElasticDocument>
-        {
-            Query = "a",
-            SortDescriptor = sortDescriptor,
-            Size = request.Count ?? 10,
-            Offset = request.StartIndex,
-        };
-
-        return _elasticsearchService.SearchAsync<ElasticDocument>(searchQuery);
+        return _elasticsearchService.SearchAsync(searchRequest);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace GriffSoft.SmartSearch.Logic.Dtos;
-internal class ElasticDocumentId
+namespace GriffSoft.SmartSearch.Logic.Configurators;
+internal class ElasticDocumentIdProperties
 {
     public required string Server { get; init; }
 

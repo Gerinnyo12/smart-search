@@ -1,6 +1,5 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.IndexManagement;
-
 using GriffSoft.SmartSearch.Logic.Dtos;
 
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Text.Json;
 using IndexSettings = GriffSoft.SmartSearch.Logic.Settings.IndexSettings;
 
 namespace GriffSoft.SmartSearch.Logic.Configurators;
-internal class IndexConfigurator
+internal class ElasticIndexConfigurator
 {
     private readonly IndexSettings _indexSettings;
 
@@ -20,7 +19,7 @@ internal class IndexConfigurator
 
     public CreateIndexRequestDescriptor<ElasticDocument> IndexDescriptor => CreateIndexDescriptor();
 
-    public IndexConfigurator(IndexSettings indexSettings)
+    public ElasticIndexConfigurator(IndexSettings indexSettings)
     {
         _indexSettings = indexSettings;
     }
@@ -36,6 +35,7 @@ internal class IndexConfigurator
                 .Keyword(d => d.Server, d => d.Index(false))
                 .Keyword(d => d.Database, d => d.Index(false))
                 .Keyword(d => d.Table, d => d.Index(false))
+                .IntegerNumber(d => d.Type, d => d.Index(false))
                 .Keyword(d => d.Column, d => d.Index(false))
                 .Object(d => d.Keys, d => d.Enabled(false))
                 .SearchAsYouType(d => d.Value)));
@@ -56,7 +56,7 @@ internal class IndexConfigurator
     private string CreateId(ElasticDocument document)
     {
         // TODO MAPPER
-        var elasticDocumentId = new ElasticDocumentId
+        var elasticDocumentIdProperties = new ElasticDocumentIdProperties
         {
             Server = document.Server,
             Database = document.Database,
@@ -65,13 +65,13 @@ internal class IndexConfigurator
             Keys = document.Keys,
         };
 
-        string hashedId = HashDocument(elasticDocumentId);
+        string hashedId = HashDocument(elasticDocumentIdProperties);
         return hashedId;
     }
 
-    private string HashDocument(ElasticDocumentId elasticDocumentId)
+    private string HashDocument(ElasticDocumentIdProperties elasticDocumentIdProperties)
     {
-        string json = JsonSerializer.Serialize(elasticDocumentId);
+        string json = JsonSerializer.Serialize(elasticDocumentIdProperties);
         byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
 
         using var hashAlgorithm = MD5.Create();
