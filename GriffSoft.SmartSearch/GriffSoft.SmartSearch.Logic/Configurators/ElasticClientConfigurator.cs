@@ -4,8 +4,6 @@ using Elastic.Transport;
 using GriffSoft.SmartSearch.Logic.Settings;
 
 using System;
-using System.Diagnostics;
-using System.Text;
 
 namespace GriffSoft.SmartSearch.Logic.Configurators;
 internal class ElasticClientConfigurator

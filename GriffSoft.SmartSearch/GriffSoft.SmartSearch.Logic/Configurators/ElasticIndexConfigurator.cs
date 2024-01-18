@@ -1,5 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.IndexManagement;
+
 using GriffSoft.SmartSearch.Logic.Dtos;
 
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ internal class ElasticIndexConfigurator
                 .Keyword(d => d.Server, d => d.Index(false))
                 .Keyword(d => d.Database, d => d.Index(false))
                 .Keyword(d => d.Table, d => d.Index(false))
-                .IntegerNumber(d => d.Type, d => d.Index(false))
+                .Keyword(d => d.Type, d => d.Index(false))
                 .Keyword(d => d.Column, d => d.Index(false))
                 .Object(d => d.Keys, d => d.Enabled(false))
                 .SearchAsYouType(d => d.Value)));
@@ -56,22 +57,22 @@ internal class ElasticIndexConfigurator
     private string CreateId(ElasticDocument document)
     {
         // TODO MAPPER
-        var elasticDocumentIdProperties = new ElasticDocumentIdProperties
+        var elasticDocumentIdHashDto = new ElasticDocumentIdHashDto
         {
             Server = document.Server,
             Database = document.Database,
             Table = document.Table,
+            Type = document.Type,
             Column = document.Column,
             Keys = document.Keys,
         };
 
-        string hashedId = HashDocument(elasticDocumentIdProperties);
-        return hashedId;
+        return HashDocument(elasticDocumentIdHashDto);
     }
 
-    private string HashDocument(ElasticDocumentIdProperties elasticDocumentIdProperties)
+    private string HashDocument(ElasticDocumentIdHashDto elasticDocumentIdHashDto)
     {
-        string json = JsonSerializer.Serialize(elasticDocumentIdProperties);
+        string json = JsonSerializer.Serialize(elasticDocumentIdHashDto);
         byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
 
         using var hashAlgorithm = MD5.Create();

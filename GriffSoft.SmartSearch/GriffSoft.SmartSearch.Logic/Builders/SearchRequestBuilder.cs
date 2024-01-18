@@ -1,6 +1,5 @@
 ﻿using GriffSoft.SmartSearch.Logic.Dtos;
-
-using System;
+using GriffSoft.SmartSearch.Logic.Exceptions;
 
 using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.SearchRequest;
 
@@ -13,12 +12,12 @@ public class SearchRequestBuilder
     {
         if (_searchRequest.Filters is null)
         {
-            throw new Exception($"{nameof(_searchRequest.Filters)} must be set.");
+            throw new MissingRequestPropertyException($"{nameof(_searchRequest.Filters)} must be set.");
         }
 
         if (_searchRequest.Size == 0)
         {
-            throw new Exception($"{nameof(_searchRequest.Size)} must be set.");
+            throw new MissingRequestPropertyException($"{nameof(_searchRequest.Size)} must be set.");
         }
 
         return _searchRequest;

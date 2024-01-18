@@ -1,8 +1,10 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using GriffSoft.SmartSearch.Logic.Dtos.Enums;
+
 using GriffSoft.SmartSearch.Logic.Dtos;
-using System.Collections.Generic;
+using GriffSoft.SmartSearch.Logic.Dtos.Enums;
+
 using System;
+using System.Collections.Generic;
 
 namespace GriffSoft.SmartSearch.Logic.Appliers;
 internal class SortApplier

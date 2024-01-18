@@ -2,8 +2,8 @@
 
 using System.Threading.Tasks;
 
-namespace GriffSoft.SmartSearch.Logic.Database;
-internal class SqlConnector : IDatabaseConnector<SqlConnection>
+namespace GriffSoft.SmartSearch.Database.Connection.Sql;
+public class SqlConnector : IDatabaseConnector<SqlConnection>
 {
     private readonly SqlConnection _sqlConnection;
     private readonly Task _connectionOpenerTask;

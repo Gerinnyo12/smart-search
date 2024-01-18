@@ -1,7 +1,7 @@
-﻿using System;
-
-using GriffSoft.SmartSearch.Logic.Appliers.MatchAppliers;
+﻿using GriffSoft.SmartSearch.Logic.Appliers.MatchAppliers;
 using GriffSoft.SmartSearch.Logic.Dtos.Enums;
+
+using System;
 
 namespace GriffSoft.SmartSearch.Logic.Extensions;
 internal static class SearchMatchTypeExtensions

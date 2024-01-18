@@ -18,15 +18,15 @@
             <ColumnOptions>
                 <label>
                     @TableType.First.ToString()
-                    <input type="checkbox" @bind="IsFirst" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First, (bool)e.Value!)" />
+                    <input type="checkbox" @bind="IsFirst" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First.ToString(), (bool)e.Value!)" />
                 </label>
                 <label>
                     @TableType.Second.ToString()
-                    <input type="checkbox" @bind="IsSecond" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second, (bool)e.Value!)" />
+                    <input type="checkbox" @bind="IsSecond" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second.ToString(), (bool)e.Value!)" />
                 </label>
                 <label>
-                    @TableType.Second.ToString()
-                    <input type="checkbox" @bind="IsThird" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Third, (bool)e.Value!)" />
+                    @TableType.Third.ToString()
+                    <input type="checkbox" @bind="IsThird" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Third.ToString(), (bool)e.Value!)" />
                 </label>
             </ColumnOptions>
         </PropertyColumn>

@@ -8,6 +8,5 @@ public static class WebAppExtensions
     {
         var serachServiceProvider = webApp.Services.GetRequiredService<SearchServiceProvider>();
         await serachServiceProvider.EnsureWorksAsync();
-        await serachServiceProvider.PrepareDataAsync();
     }
 }

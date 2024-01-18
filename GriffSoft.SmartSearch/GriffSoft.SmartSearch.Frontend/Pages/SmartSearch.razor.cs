@@ -62,15 +62,14 @@ public partial class SmartSearch
         return Grid!.RefreshDataAsync();
     }
 
-    private Task UpdateOrAsync(string fieldName, TableType type, bool fieldValue)
+    private Task UpdateOrAsync(string fieldName, string type, bool fieldValue)
     {
         if (fieldValue)
         {
             var searchOr = new SearchOr
             {
                 FieldName = fieldName,
-                FieldValue = (double)type,
-                MatchType = SearchMatchType.Numeric,
+                FieldValue = type,
             };
 
             SearchServiceProvider!.SearchOrs[type] = searchOr;

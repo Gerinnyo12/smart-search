@@ -1,4 +1,5 @@
 ﻿using Elastic.Clients.Elasticsearch.QueryDsl;
+
 using GriffSoft.SmartSearch.Logic.Appliers.AndAppliers;
 using GriffSoft.SmartSearch.Logic.Appliers.OrAppliers;
 using GriffSoft.SmartSearch.Logic.Dtos;

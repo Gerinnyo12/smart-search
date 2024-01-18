@@ -1,8 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Transport.Products.Elasticsearch;
 
 using GriffSoft.SmartSearch.Logic.Dtos;
-
-using System.Linq;
 
 namespace GriffSoft.SmartSearch.Logic.Extensions;
 internal static class ElasticClientExtensions
@@ -14,5 +13,15 @@ internal static class ElasticClientExtensions
             TotalCount = searchResponse.Total,
             Hits = searchResponse.Documents,
         };
+    }
+
+    public static string GetExceptionMessage(this ElasticsearchResponse elasticsearchResponse)
+    {
+        const string UnknownReason = "Unknown reason";
+        string reason = elasticsearchResponse.ElasticsearchServerError?.Error?.Reason
+            ?? elasticsearchResponse.ApiCallDetails.OriginalException?.Message
+            ?? UnknownReason;
+
+        return reason;
     }
 }
