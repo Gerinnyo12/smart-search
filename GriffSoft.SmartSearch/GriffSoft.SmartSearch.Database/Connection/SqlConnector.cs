@@ -2,7 +2,7 @@
 
 using System.Threading.Tasks;
 
-namespace GriffSoft.SmartSearch.Database.Connection.Sql;
+namespace GriffSoft.SmartSearch.Database.Connection;
 public class SqlConnector : IDatabaseConnector<SqlConnection>
 {
     private readonly SqlConnection _sqlConnection;

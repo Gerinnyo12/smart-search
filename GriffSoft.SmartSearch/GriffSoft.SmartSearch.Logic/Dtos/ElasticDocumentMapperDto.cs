@@ -1,7 +1,7 @@
 ﻿using GriffSoft.SmartSearch.Logic.Dtos.Enums;
 
 namespace GriffSoft.SmartSearch.Logic.Dtos;
-public class DataReaderDto
+public class ElasticDocumentMapperDto
 {
     public required string Server { get; init; }
 
@@ -11,7 +11,7 @@ public class DataReaderDto
 
     public required TableType Type { get; init; }
 
-    public required string Column { get; init; }
-
     public required string[] Keys { get; init; }
+
+    public required string[] Columns { get; init; }
 }

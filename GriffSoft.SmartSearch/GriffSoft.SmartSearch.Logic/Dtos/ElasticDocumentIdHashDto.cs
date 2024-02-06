@@ -13,7 +13,7 @@ internal class ElasticDocumentIdHashDto
 
     public required TableType Type { get; init; }
 
-    public required string Column { get; init; }
-
     public required Dictionary<string, object> Keys { get; init; }
+
+    public required string Column { get; init; }
 }

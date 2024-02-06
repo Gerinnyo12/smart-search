@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace GriffSoft.SmartSearch.Logic.Settings;
+namespace GriffSoft.SmartSearch.Logic.Options;
 public class ElasticsearchData : IValidatable
 {
     public required int BatchSize { get; init; }

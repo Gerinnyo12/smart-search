@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace GriffSoft.SmartSearch.Logic.Settings;
-public class IndexSettings : IValidatable
+namespace GriffSoft.SmartSearch.Logic.Options;
+public class IndexOptions : IValidatable
 {
     public string IndexName { get; init; } = "search-index";
 

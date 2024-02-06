@@ -18,8 +18,6 @@ public class SearchServiceProvider(ISearchService<ElasticDocument> elasticsearch
 
     private readonly ISearchService<ElasticDocument> _elasticsearchService = elasticsearchService;
 
-    public Task EnsureWorksAsync() => _elasticsearchService.EnsureAvailableAsync();
-
     private static SortDirection GetSortDirection(Microsoft.AspNetCore.Components.QuickGrid.SortDirection direction) =>
         direction == Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Ascending
             ? SortDirection.Ascending : SortDirection.Descending;

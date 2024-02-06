@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Logic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Frontend", "GriffSoft.SmartSearch.Frontend\GriffSoft.SmartSearch.Frontend.csproj", "{C5B29824-CD70-450C-BD05-E41FDE1D3CA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GriffSoft.SmartSearch.Database", "GriffSoft.SmartSearch.Database\GriffSoft.SmartSearch.Database.csproj", "{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Database", "GriffSoft.SmartSearch.Database\GriffSoft.SmartSearch.Database.csproj", "{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

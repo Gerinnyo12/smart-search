@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace GriffSoft.SmartSearch.Logic.Settings;
+namespace GriffSoft.SmartSearch.Logic.Options;
 public class ElasticTargetTable : IValidatable
 {
     private const string SqlValidatorRegex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
@@ -13,9 +13,9 @@ public class ElasticTargetTable : IValidatable
 
     public required TableType Type { get; init; }
 
-    public required string[] Columns { get; init; }
-
     public required string[] Keys { get; init; }
+
+    public required string[] Columns { get; init; }
 
     public void InvalidateIfIncorrect()
     {
@@ -34,24 +34,6 @@ public class ElasticTargetTable : IValidatable
             throw new Exception($"{nameof(Type)} must be provided.");
         }
 
-        if (!Columns.Any())
-        {
-            throw new Exception("At least 1 column must be provided.");
-        }
-
-        foreach (var column in Columns)
-        {
-            if (string.IsNullOrWhiteSpace(column))
-            {
-                throw new Exception($"Every {nameof(column)} name must be a valid string.");
-            }
-
-            if (!Regex.IsMatch(column, SqlValidatorRegex))
-            {
-                throw new Exception($"{nameof(column)} is not a valid sql column name.");
-            }
-        }
-
         if (!Keys.Any())
         {
             throw new Exception("The keys of the table must be provided.");
@@ -67,6 +49,24 @@ public class ElasticTargetTable : IValidatable
             if (!Regex.IsMatch(key, SqlValidatorRegex))
             {
                 throw new Exception($"{nameof(key)} is not a valid sql key name.");
+            }
+        }
+
+        if (!Columns.Any())
+        {
+            throw new Exception("At least 1 column must be provided.");
+        }
+
+        foreach (var column in Columns)
+        {
+            if (string.IsNullOrWhiteSpace(column))
+            {
+                throw new Exception($"Every {nameof(column)} name must be a valid string.");
+            }
+
+            if (!Regex.IsMatch(column, SqlValidatorRegex))
+            {
+                throw new Exception($"{nameof(column)} is not a valid sql column name.");
             }
         }
     }

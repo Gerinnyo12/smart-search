@@ -1,7 +1,7 @@
 ﻿using System;
 
-namespace GriffSoft.SmartSearch.Logic.Settings;
-public class ElasticClientSettings : IValidatable
+namespace GriffSoft.SmartSearch.Logic.Options;
+public class ElasticsearchClientOptions : IValidatable
 {
     public string Url { get; init; } = "https://localhost:9200";
 
@@ -10,6 +10,8 @@ public class ElasticClientSettings : IValidatable
     public required string Username { get; init; }
 
     public required string Password { get; init; }
+
+    public required IndexOptions IndexOptions { get; set; }
 
     public void InvalidateIfIncorrect()
     {
@@ -33,5 +35,7 @@ public class ElasticClientSettings : IValidatable
         {
             throw new Exception($"{nameof(Password)} must be provided.");
         }
+
+        IndexOptions.InvalidateIfIncorrect();
     }
 }
