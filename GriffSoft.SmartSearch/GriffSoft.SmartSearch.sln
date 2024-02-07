@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Front
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Database", "GriffSoft.SmartSearch.Database\GriffSoft.SmartSearch.Database.csproj", "{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GriffSoft.SmartSearch.ChangeTracker", "GriffSoft.SmartSearch.ChangeTracker\GriffSoft.SmartSearch.ChangeTracker.csproj", "{C41992A9-A708-45E7-8C27-8D493CA01282}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C41992A9-A708-45E7-8C27-8D493CA01282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41992A9-A708-45E7-8C27-8D493CA01282}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41992A9-A708-45E7-8C27-8D493CA01282}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41992A9-A708-45E7-8C27-8D493CA01282}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,3 +1,5 @@
+using GriffSoft.SmartSearch.ChangeTracker.Options;
+using GriffSoft.SmartSearch.ChangeTracker.Services;
 using GriffSoft.SmartSearch.Frontend.Extensions;
 using GriffSoft.SmartSearch.Frontend.Providers;
 using GriffSoft.SmartSearch.Logic.Dtos;
@@ -11,11 +13,13 @@ builder.Services.AddServerSideBlazor();
 
 builder.RegisterValidatableOption<ElasticsearchClientOptions>(nameof(ElasticsearchClientOptions));
 builder.RegisterValidatableOption<ElasticsearchData>(nameof(ElasticsearchData));
+builder.RegisterValidatableOption<CronSchedulerOptions>(nameof(CronSchedulerOptions));
 
 builder.Services.AddSingleton<ElasticsearchClientProvider>();
 builder.Services.AddSingleton<ISearchService<ElasticDocument>, ElasticSearchService>();
 builder.Services.AddSingleton<IChangeTrackerService<ElasticDocument>, ElasticChangeTrackerService>();
 builder.Services.AddTransient<SearchServiceProvider>();
+builder.Services.AddHostedService<CronSchedulerService>();
 
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())

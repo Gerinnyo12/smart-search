@@ -1,9 +1,9 @@
 ﻿using GriffSoft.SmartSearch.Logic.Dtos;
 
-using System.Security.Cryptography;
-using System.Text.Json;
-using System.Text;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 namespace GriffSoft.SmartSearch.Logic.Factories;
 internal class IdHashFactory : IFactory<string>

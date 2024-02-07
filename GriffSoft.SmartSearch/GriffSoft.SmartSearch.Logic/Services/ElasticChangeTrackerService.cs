@@ -28,7 +28,7 @@ public class ElasticChangeTrackerService : IChangeTrackerService<ElasticDocument
 
     public DateTime LastSynchonizationDate { get; private set; } = DateTime.MinValue;
 
-    public ElasticChangeTrackerService(ElasticsearchClientProvider elasticsearchClientProvider, IOptions<ElasticsearchData> elasticsearchData, 
+    public ElasticChangeTrackerService(ElasticsearchClientProvider elasticsearchClientProvider, IOptions<ElasticsearchData> elasticsearchData,
         IOptions<IndexOptions> indexOptions, ILogger<ElasticChangeTrackerService> logger)
     {
         _elasticsearchClientProvider = elasticsearchClientProvider;
