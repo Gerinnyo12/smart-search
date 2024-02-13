@@ -2,17 +2,19 @@
 
 using GriffSoft.SmartSearch.Logic.Appliers;
 using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 using GriffSoft.SmartSearch.Logic.Exceptions;
 using GriffSoft.SmartSearch.Logic.Extensions;
 using GriffSoft.SmartSearch.Logic.Providers;
 
 using Microsoft.Extensions.Logging;
 
+using System.Diagnostics;
 using System.Threading.Tasks;
 
-using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.SearchRequest;
+using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.Searching.SearchRequest;
 
-namespace GriffSoft.SmartSearch.Logic.Services;
+namespace GriffSoft.SmartSearch.Logic.Services.Searching;
 /// <summary>
 /// TODO
 /// </summary>

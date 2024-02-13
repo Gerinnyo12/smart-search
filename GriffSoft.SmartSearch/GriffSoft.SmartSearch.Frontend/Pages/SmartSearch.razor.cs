@@ -1,6 +1,7 @@
 ﻿using GriffSoft.SmartSearch.Frontend.Providers;
 using GriffSoft.SmartSearch.Logic.Dtos;
 using GriffSoft.SmartSearch.Logic.Dtos.Enums;
+using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;

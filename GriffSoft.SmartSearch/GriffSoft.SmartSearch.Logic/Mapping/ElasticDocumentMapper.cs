@@ -1,5 +1,6 @@
 ﻿using GriffSoft.SmartSearch.Database.Mapping;
 using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Synchronization;
 
 using System;
 using System.Collections.Generic;

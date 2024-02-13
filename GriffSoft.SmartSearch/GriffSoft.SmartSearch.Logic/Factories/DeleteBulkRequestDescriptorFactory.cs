@@ -1,6 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 
 using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Synchronization;
 
 using System.Collections.Generic;
 using System.Linq;

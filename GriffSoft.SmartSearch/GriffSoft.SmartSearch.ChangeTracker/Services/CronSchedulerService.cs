@@ -1,6 +1,5 @@
 ﻿using GriffSoft.SmartSearch.ChangeTracker.Options;
-using GriffSoft.SmartSearch.Logic.Dtos;
-using GriffSoft.SmartSearch.Logic.Services;
+using GriffSoft.SmartSearch.Logic.Services.Synchronization;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -8,10 +7,10 @@ using Microsoft.Extensions.Options;
 
 namespace GriffSoft.SmartSearch.ChangeTracker.Services;
 
-public class CronSchedulerService(IChangeTrackerService<ElasticDocument> changeTrackerService,
+public class CronSchedulerService(ISynchronizerService synchronizerService,
     IOptions<CronSchedulerOptions> cronSchedulerOptions, ILogger<CronSchedulerService> logger) : BackgroundService, ICronSchedulerService
 {
-    private readonly IChangeTrackerService<ElasticDocument> _changeTrackerService = changeTrackerService;
+    private readonly ISynchronizerService _synchronizerService = synchronizerService;
     private readonly CronSchedulerOptions _cronSchedulerOptions = cronSchedulerOptions.Value;
     private readonly ILogger<CronSchedulerService> _logger = logger;
 
@@ -39,7 +38,7 @@ public class CronSchedulerService(IChangeTrackerService<ElasticDocument> changeT
 
         try
         {
-            await _changeTrackerService.TrackChangesAsync();
+            await _synchronizerService.SynchronizeAsync();
             _logger.LogInformation("Every scheduled job finished running.");
         }
         catch (Exception exception)

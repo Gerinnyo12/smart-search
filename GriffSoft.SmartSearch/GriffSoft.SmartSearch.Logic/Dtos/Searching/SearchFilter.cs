@@ -1,6 +1,6 @@
 ﻿using GriffSoft.SmartSearch.Logic.Dtos.Enums;
 
-namespace GriffSoft.SmartSearch.Logic.Dtos;
+namespace GriffSoft.SmartSearch.Logic.Dtos.Searching;
 public class SearchFilter
 {
     public required SearchMatchType MatchType { get; init; }

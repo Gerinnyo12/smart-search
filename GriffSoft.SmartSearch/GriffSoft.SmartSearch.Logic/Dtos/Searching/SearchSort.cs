@@ -1,6 +1,6 @@
 ﻿using GriffSoft.SmartSearch.Logic.Dtos.Enums;
 
-namespace GriffSoft.SmartSearch.Logic.Dtos;
+namespace GriffSoft.SmartSearch.Logic.Dtos.Searching;
 public class SearchSort
 {
     public required string FieldName { get; init; }

@@ -1,7 +1,9 @@
 ﻿using GriffSoft.SmartSearch.Logic.Dtos.Enums;
 
-namespace GriffSoft.SmartSearch.Logic.Dtos;
-public class ElasticDocumentMapperDto
+using System.Collections.Generic;
+
+namespace GriffSoft.SmartSearch.Logic.Dtos.Synchronization;
+internal class ElasticDocumentIdHashDto
 {
     public required string Server { get; init; }
 
@@ -11,7 +13,7 @@ public class ElasticDocumentMapperDto
 
     public required TableType Type { get; init; }
 
-    public required string[] Keys { get; init; }
+    public required Dictionary<string, object> Keys { get; init; }
 
-    public required string[] Columns { get; init; }
+    public required string Column { get; init; }
 }

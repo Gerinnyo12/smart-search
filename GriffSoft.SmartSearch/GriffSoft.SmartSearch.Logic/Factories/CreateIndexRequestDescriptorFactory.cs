@@ -22,12 +22,12 @@ internal class CreateIndexRequestDescriptorFactory : IFactory<CreateIndexRequest
                 .NumberOfShards(_indexOptions.NumberOfShards)
                 .NumberOfReplicas(_indexOptions.NumberOfReplicas))
                 .Mappings(t => t.Properties(p => p
-                    .Keyword(d => d.Server, d => d.Index(false))
-                    .Keyword(d => d.Database, d => d.Index(false))
-                    .Keyword(d => d.Table, d => d.Index(false))
-                    .Keyword(d => d.Type, d => d.Index(false))
-                    .Object(d => d.Keys, d => d.Enabled(false))
-                    .Keyword(d => d.Column, d => d.Index(false))
+                    .Keyword(d => d.Server)
+                    .Keyword(d => d.Database)
+                    .Keyword(d => d.Table)
+                    .Keyword(d => d.Type)
+                    .Keyword(d => d.Column)
+                    .Object(d => d.Keys, c => c.Enabled(false))
                     .SearchAsYouType(d => d.Value)));
 
         return indexDescriptor;

@@ -1,6 +1,7 @@
 ﻿using GriffSoft.SmartSearch.Logic.Builders;
 using GriffSoft.SmartSearch.Logic.Dtos;
-using GriffSoft.SmartSearch.Logic.Services;
+using GriffSoft.SmartSearch.Logic.Dtos.Searching;
+using GriffSoft.SmartSearch.Logic.Services.Searching;
 
 using Microsoft.AspNetCore.Components.QuickGrid;
 

@@ -1,7 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Transport.Products.Elasticsearch;
 
-using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 
 namespace GriffSoft.SmartSearch.Logic.Extensions;
 internal static class ElasticClientExtensions

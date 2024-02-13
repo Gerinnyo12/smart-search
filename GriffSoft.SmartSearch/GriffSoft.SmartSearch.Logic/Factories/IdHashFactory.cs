@@ -1,4 +1,4 @@
-﻿using GriffSoft.SmartSearch.Logic.Dtos;
+﻿using GriffSoft.SmartSearch.Logic.Dtos.Synchronization;
 
 using System.Linq;
 using System.Security.Cryptography;

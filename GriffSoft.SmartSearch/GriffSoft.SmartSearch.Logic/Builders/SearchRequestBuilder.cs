@@ -1,10 +1,10 @@
-﻿using GriffSoft.SmartSearch.Logic.Dtos;
+﻿using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 using GriffSoft.SmartSearch.Logic.Exceptions;
 
-using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.SearchRequest;
+using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.Searching.SearchRequest;
 
 namespace GriffSoft.SmartSearch.Logic.Builders;
-public class SearchRequestBuilder
+public class SearchRequestBuilder : IBuilder<SearchRequest>
 {
     private readonly SearchRequest _searchRequest = new();
 

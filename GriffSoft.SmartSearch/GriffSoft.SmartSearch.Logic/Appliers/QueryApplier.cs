@@ -3,6 +3,7 @@
 using GriffSoft.SmartSearch.Logic.Appliers.AndAppliers;
 using GriffSoft.SmartSearch.Logic.Appliers.OrAppliers;
 using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 using GriffSoft.SmartSearch.Logic.Extensions;
 
 using System.Collections.Generic;

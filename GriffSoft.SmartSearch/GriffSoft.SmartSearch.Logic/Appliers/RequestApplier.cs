@@ -3,7 +3,7 @@ using Elastic.Clients.Elasticsearch.QueryDsl;
 
 using GriffSoft.SmartSearch.Logic.Dtos;
 
-using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.SearchRequest;
+using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.Searching.SearchRequest;
 
 namespace GriffSoft.SmartSearch.Logic.Appliers;
 internal class RequestApplier

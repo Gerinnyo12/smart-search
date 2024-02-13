@@ -1,6 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch.QueryDsl;
 
 using GriffSoft.SmartSearch.Logic.Dtos;
+using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 
 using System;
 using System.Collections.Generic;

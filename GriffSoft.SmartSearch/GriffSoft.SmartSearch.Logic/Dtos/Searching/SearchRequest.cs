@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GriffSoft.SmartSearch.Logic.Dtos;
+namespace GriffSoft.SmartSearch.Logic.Dtos.Searching;
 public class SearchRequest
 {
     public SearchFilter Filters { get; set; } = default!;

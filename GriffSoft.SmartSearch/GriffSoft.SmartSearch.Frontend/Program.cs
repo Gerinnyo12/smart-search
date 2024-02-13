@@ -5,7 +5,8 @@ using GriffSoft.SmartSearch.Frontend.Providers;
 using GriffSoft.SmartSearch.Logic.Dtos;
 using GriffSoft.SmartSearch.Logic.Options;
 using GriffSoft.SmartSearch.Logic.Providers;
-using GriffSoft.SmartSearch.Logic.Services;
+using GriffSoft.SmartSearch.Logic.Services.Searching;
+using GriffSoft.SmartSearch.Logic.Services.Synchronization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -17,8 +18,10 @@ builder.RegisterValidatableOption<CronSchedulerOptions>(nameof(CronSchedulerOpti
 
 builder.Services.AddSingleton<ElasticsearchClientProvider>();
 builder.Services.AddSingleton<ISearchService<ElasticDocument>, ElasticSearchService>();
-builder.Services.AddSingleton<IChangeTrackerService<ElasticDocument>, ElasticChangeTrackerService>();
 builder.Services.AddTransient<SearchServiceProvider>();
+
+builder.Services.AddSingleton<ElasticBulkOperationService>();
+builder.Services.AddSingleton<ISynchronizerService, ElasticReIndexService>();
 builder.Services.AddHostedService<CronSchedulerService>();
 
 var app = builder.Build();
