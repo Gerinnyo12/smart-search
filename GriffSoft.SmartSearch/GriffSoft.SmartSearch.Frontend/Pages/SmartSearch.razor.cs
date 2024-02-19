@@ -82,4 +82,16 @@ public partial class SmartSearch
 
         return Grid!.RefreshDataAsync();
     }
+
+    private static string GetKeyList(Dictionary<string, object> keys)
+    {
+        var keyList = new List<string>();
+
+        foreach (var key in keys)
+        {
+            keyList.Add(key.Key + ": " + key.Value);
+        }
+
+        return string.Join(", ", keyList);
+    }
 }

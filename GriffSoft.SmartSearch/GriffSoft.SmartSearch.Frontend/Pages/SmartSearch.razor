@@ -7,76 +7,90 @@
 
 <PageTitle>Smart Search</PageTitle>
 
-<div class="search-box mb-3">
-    <input type="search" autofocus @bind="Filter" @oninput='(e) => UpdateFilterAsync(GetStringValue(e))' placeholder="Puszedli" />
-</div>
+<div class="max-height-flex-column">
+    <div class="d-flex flex-row justify-content-between">
+        <div class="form-group p-3">
+            <input type="search" class="form-control" autofocus placeholder="Puszedli" 
+                @bind="Filter" @oninput='(e) => UpdateFilterAsync(GetStringValue(e))' />
+        </div>
+        <div class="p-3">
+            @if (TotalCount == 10_000)
+            {
+                <span>At least </span>
+            }
+            <strong>@TotalCount results found</strong>
+        </div>
+    </div>
 
-<div class="grid mb-3" tabindex="-1">
-    <QuickGrid ItemsProvider="@ElasticDocumentsProvider" Virtualize="true" @ref=Grid>
-        <PropertyColumn Property="@(d => d.Value)" />
-        <PropertyColumn Property="@(d => d.Type)" Sortable=true>
-            <ColumnOptions>
-                <label>
-                    @TableType.First.ToString()
-                    <input type="checkbox" @bind="IsFirst" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First.ToString(), (bool)e.Value!)" />
-                </label>
-                <label>
-                    @TableType.Second.ToString()
-                    <input type="checkbox" @bind="IsSecond" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second.ToString(), (bool)e.Value!)" />
-                </label>
-                <label>
-                    @TableType.Third.ToString()
-                    <input type="checkbox" @bind="IsThird" @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Third.ToString(), (bool)e.Value!)" />
-                </label>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(d => d.Database)" Sortable=true IsDefaultSortColumn=true
-                        InitialSortDirection="Microsoft.AspNetCore.Components.QuickGrid.SortDirection.Ascending">
-            <ColumnOptions>
-                <label>
-                    Database Filter
-                    <input type="text" autofocus @bind="Database"
-                           @oninput='(e) => UpdateAndAsync(nameof(Database), GetStringValue(e))'
-                           placeholder="Database name..." />
-                </label>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(d => d.Table)" Sortable=true>
-            <ColumnOptions>
-                <label>
-                    Table Filter
-                    <input type="text" autofocus @bind="Table"
-                           @oninput='(e) => UpdateAndAsync(nameof(Table), GetStringValue(e))'
-                           placeholder="Table name..." />
-                </label>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(d => d.Column)" Sortable=true>
-            <ColumnOptions>
-                <label>
-                    Column Filter
-                    <input type="text" autofocus @bind="Column"
-                           @oninput='(e) => UpdateAndAsync(nameof(Column), GetStringValue(e))'
-                           placeholder="Column name..." />
-                </label>
-            </ColumnOptions>
-        </PropertyColumn>
-        <TemplateColumn Title="@nameof(ElasticDocument.Keys)">
-            @JsonSerializer.Serialize(context.Keys)
-        </TemplateColumn>
-    </QuickGrid>
+    <div class="stretch grid ms-3" tabindex="-1">
+        <QuickGrid ItemsProvider="@ElasticDocumentsProvider" Virtualize="true" Theme="corporate" @ref=Grid>
+            <PropertyColumn Property="@(d => d.Value)" />
+            <TemplateColumn Title="@nameof(ElasticDocument.Keys)">
+                @GetKeyList(context.Keys)
+            </TemplateColumn>
+            <PropertyColumn Property="@(d => d.Type)" Sortable=true>
+                <ColumnOptions>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isFirst" @bind="IsFirst" 
+                            @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First.ToString(), (bool)e.Value!)">
+                        <label class="form-check-label" for="isFirst">@TableType.First.ToString()</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isSecond" @bind="IsSecond" 
+                            @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second.ToString(), (bool)e.Value!)">
+                        <label class="form-check-label" for="isSecond">@TableType.Second.ToString()</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isThird" @bind="IsThird"
+                               @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Third.ToString(), (bool)e.Value!)">
+                        <label class="form-check-label" for="isThird">@TableType.Third.ToString()</label>
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Property="@(d => d.Server)" Sortable=true IsDefaultSortColumn=true>
+                <ColumnOptions>
+                    <div class="form-group">
+                        <label for="server">Server Filter</label>
+                        <input type="search" class="form-control" id="server" placeholder="Server name..."
+                               @bind="Server" @oninput='(e) => UpdateAndAsync(nameof(Server), GetStringValue(e))' />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Property="@(d => d.Database)" Sortable=true>
+                <ColumnOptions>
+                    <div class="form-group">
+                        <label for="database">Database Filter</label>
+                        <input type="search" class="form-control" id="database" placeholder="Database name..."
+                               @bind="Database" @oninput='(e) => UpdateAndAsync(nameof(Database), GetStringValue(e))' />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Property="@(d => d.Table)" Sortable=true>
+                <ColumnOptions>
+                    <div class="form-group">
+                        <label for="table">Table Filter</label>
+                        <input type="search" class="form-control" id="table" placeholder="Table name..."
+                               @bind="Table" @oninput='(e) => UpdateAndAsync(nameof(Table), GetStringValue(e))' />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Property="@(d => d.Column)" Sortable=true>
+                <ColumnOptions>
+                    <div class="form-group">
+                        <label for="column">Column Filter</label>
+                        <input type="search" class="form-control" id="column" placeholder="Column name..."
+                               @bind="Column" @oninput='(e) => UpdateAndAsync(nameof(Column), GetStringValue(e))' />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+        </QuickGrid>
+    </div>
 </div>
-
-<p>
-    @if (TotalCount == 10_000)
-    {
-        <span>At least </span>
-    }
-    <strong>@TotalCount results found</strong>
-</p>
 
 @code {
     public string Filter { get; set; } = string.Empty;
+
+    public string Server { get; set; } = string.Empty;
 
     public string Database { get; set; } = string.Empty;
 
