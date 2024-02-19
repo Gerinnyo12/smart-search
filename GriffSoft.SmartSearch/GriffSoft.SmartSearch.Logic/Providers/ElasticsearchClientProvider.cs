@@ -29,11 +29,17 @@ public class ElasticsearchClientProvider
         _initializationTask = InitializeAsync();
     }
 
+    private async Task<ElasticsearchClient> GetClientAsync()
+    {
+        await _initializationTask;
+        return _elasticsearchClient;
+    }
+
     private async Task InitializeAsync()
     {
         _elasticsearchClient = CreateClient();
         await EnsureAvailableAsync();
-        await CreateIndexIfAbsentAsync();
+        await ReCreateIndexAsync();
     }
 
     private ElasticsearchClient CreateClient()
@@ -43,30 +49,6 @@ public class ElasticsearchClientProvider
         var elasticsearchClient = new ElasticsearchClient(elasticsearchClientSettings);
 
         return elasticsearchClient;
-    }
-
-    private async Task CreateIndexIfAbsentAsync()
-    {
-        var existsResponse = await _elasticsearchClient.Indices.ExistsAsync(_elasticsearchClientOptions.IndexOptions.IndexName);
-        if (existsResponse.Exists)
-        {
-            _logger.LogInformation("The {indexName} index already exists.", _elasticsearchClientOptions.IndexOptions.IndexName);
-            return;
-        }
-
-        var createIndexRequestDescriptorFactory = new CreateIndexRequestDescriptorFactory(_elasticsearchClientOptions.IndexOptions);
-        var indexDescriptor = createIndexRequestDescriptorFactory.Create();
-        var indexResponse = await _elasticsearchClient.Indices.CreateAsync(indexDescriptor);
-        if (indexResponse.ShardsAcknowledged)
-        {
-            _logger.LogInformation("The {indexName} index was successfully created.", _elasticsearchClientOptions.IndexOptions.IndexName);
-            return;
-        }
-
-        string reason = indexResponse.GetExceptionMessage();
-        var indexCreationException = new IndexCreationException(reason);
-        _logger.LogError(indexCreationException, "Could not create index.");
-        throw indexCreationException;
     }
 
     private async Task EnsureAvailableAsync()
@@ -81,9 +63,55 @@ public class ElasticsearchClientProvider
         }
     }
 
-    private async Task<ElasticsearchClient> GetClientAsync()
+    /// <summary>
+    /// The index needs to be deleted first so every remnant unwanted data gets purged.
+    /// </summary>
+    private async Task ReCreateIndexAsync()
     {
-        await _initializationTask;
-        return _elasticsearchClient;
+        _logger.LogInformation("Recreating index '{indexName}'.", _elasticsearchClientOptions.IndexOptions.IndexName);
+        await DropIndexAsync();
+        await CreateIndexAsync();
+    }
+
+    private async Task DropIndexAsync()
+    {
+        var existsResponse = await _elasticsearchClient.Indices.ExistsAsync(_elasticsearchClientOptions.IndexOptions.IndexName);
+        if (!existsResponse.Exists)
+        {
+            _logger.LogInformation("The {indexName} index does not exist yet.", _elasticsearchClientOptions.IndexOptions.IndexName);
+            return;
+        }
+
+        var dropIndexRequestDescriptorFactory = new DropIndexRequestDescriptorFactory(_elasticsearchClientOptions.IndexOptions.IndexName);
+        var dropIndexRequestDescriptor = dropIndexRequestDescriptorFactory.Create();
+
+        var dropIndexResponse = await _elasticsearchClient.Indices.DeleteAsync(dropIndexRequestDescriptor);
+        if (dropIndexResponse.IsValidResponse)
+        {
+            _logger.LogInformation("The {indexName} index was successfully deleted.", _elasticsearchClientOptions.IndexOptions.IndexName);
+            return;
+        }
+
+        string reason = dropIndexResponse.GetExceptionMessage();
+        var indexDropException = new IndexDropException(reason);
+        _logger.LogError(indexDropException, "Could not drop index.");
+        throw indexDropException;
+    }
+
+    private async Task CreateIndexAsync()
+    {
+        var createIndexRequestDescriptorFactory = new CreateIndexRequestDescriptorFactory(_elasticsearchClientOptions.IndexOptions);
+        var createIndexDescriptor = createIndexRequestDescriptorFactory.Create();
+        var createIndexResponse = await _elasticsearchClient.Indices.CreateAsync(createIndexDescriptor);
+        if (createIndexResponse.IsValidResponse)
+        {
+            _logger.LogInformation("The {indexName} index was successfully created.", _elasticsearchClientOptions.IndexOptions.IndexName);
+            return;
+        }
+
+        string reason = createIndexResponse.GetExceptionMessage();
+        var indexCreationException = new IndexCreationException(reason);
+        _logger.LogError(indexCreationException, "Could not create index.");
+        throw indexCreationException;
     }
 }

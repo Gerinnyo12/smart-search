@@ -9,7 +9,6 @@ using GriffSoft.SmartSearch.Logic.Providers;
 
 using Microsoft.Extensions.Logging;
 
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.Searching.SearchRequest;
