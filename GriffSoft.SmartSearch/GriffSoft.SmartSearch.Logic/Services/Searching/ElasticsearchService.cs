@@ -1,11 +1,9 @@
-﻿using Elastic.Clients.Elasticsearch;
-
-using GriffSoft.SmartSearch.Logic.Appliers;
-using GriffSoft.SmartSearch.Logic.Dtos;
+﻿using GriffSoft.SmartSearch.Logic.Dtos;
 using GriffSoft.SmartSearch.Logic.Dtos.Searching;
 using GriffSoft.SmartSearch.Logic.Exceptions;
 using GriffSoft.SmartSearch.Logic.Extensions;
 using GriffSoft.SmartSearch.Logic.Providers;
+using GriffSoft.SmartSearch.Logic.RequestApplication;
 
 using Microsoft.Extensions.Logging;
 
@@ -32,11 +30,9 @@ public class ElasticSearchService : ISearchService<ElasticDocument>
     public async Task<SearchResult<ElasticDocument>> SearchAsync(SearchRequest searchRequest)
     {
         var elasticSearchClient = await _elasticsearchClientProvider.Client;
-        var requestApplier = new RequestApplier(searchRequest);
-        var searchRequestDescriptor = new SearchRequestDescriptor<ElasticDocument>();
-        searchRequestDescriptor = requestApplier.ApplyRequest(searchRequestDescriptor);
+        var requestApplicator = new RequestApplicator(searchRequest);
 
-        var searchResponse = await elasticSearchClient.SearchAsync(searchRequestDescriptor);
+        var searchResponse = await elasticSearchClient.SearchAsync<ElasticDocument>(requestApplicator.ApplyRequestOn);
         if (!searchResponse.IsValidResponse)
         {
             string reason = searchResponse.GetExceptionMessage();

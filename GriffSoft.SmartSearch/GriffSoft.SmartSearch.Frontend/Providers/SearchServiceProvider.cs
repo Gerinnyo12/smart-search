@@ -11,7 +11,7 @@ namespace GriffSoft.SmartSearch.Frontend.Providers;
 
 public class SearchServiceProvider(ISearchService<ElasticDocument> elasticsearchService)
 {
-    public SearchFilter SearchFilter { get; set; } = string.Empty;
+    public Dictionary<string, SearchFilter> SearchFilters { get; set; } = [];
 
     public Dictionary<string, SearchAnd> SearchAnds { get; set; } = [];
 
@@ -25,6 +25,7 @@ public class SearchServiceProvider(ISearchService<ElasticDocument> elasticsearch
 
     public Task<SearchResult<ElasticDocument>> SearchAsync(GridItemsProviderRequest<ElasticDocument> request)
     {
+        var searchFilters = SearchFilters.Values.ToArray();
         var searchAnds = SearchAnds.Values.ToArray();
         var searchOrs = SearchOrs.Values.ToArray();
         var searchSorts = request.GetSortByProperties()
@@ -37,11 +38,11 @@ public class SearchServiceProvider(ISearchService<ElasticDocument> elasticsearch
 
         var searchRequestBuilder = new SearchRequestBuilder();
         var searchRequest = searchRequestBuilder
-            .Filter(SearchFilter)
+            .Filters(searchFilters)
             .Ands(searchAnds)
             .Ors(searchOrs)
             .Sorts(searchSorts)
-            .Take(request.Count ?? 15)
+            .Take(request.Count ?? 25)
             .Skip(request.StartIndex)
             .Build();
 

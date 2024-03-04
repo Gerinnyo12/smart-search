@@ -10,11 +10,6 @@ public class SearchRequestBuilder : IBuilder<SearchRequest>
 
     public SearchRequest Build()
     {
-        if (_searchRequest.Filters is null)
-        {
-            throw new MissingRequestPropertyException($"{nameof(_searchRequest.Filters)} must be set.");
-        }
-
         if (_searchRequest.Size == 0)
         {
             throw new MissingRequestPropertyException($"{nameof(_searchRequest.Size)} must be set.");
@@ -23,9 +18,9 @@ public class SearchRequestBuilder : IBuilder<SearchRequest>
         return _searchRequest;
     }
 
-    public SearchRequestBuilder Filter(SearchFilter searchFilter)
+    public SearchRequestBuilder Filters(params SearchFilter[] searchFilters)
     {
-        _searchRequest.Filters = searchFilter;
+        _searchRequest.Filters.AddRange(searchFilters);
         return this;
     }
 

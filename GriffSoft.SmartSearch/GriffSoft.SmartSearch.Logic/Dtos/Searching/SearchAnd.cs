@@ -3,9 +3,9 @@
 namespace GriffSoft.SmartSearch.Logic.Dtos.Searching;
 public class SearchAnd
 {
-    public SearchMatchType MatchType { get; init; } = SearchMatchType.Prefix;
+    public required AndMatchType AndMatchType { get; init; }
 
     public required string FieldName { get; init; }
 
-    public required object FieldValue { get; init; }
+    public required string FieldValue { get; init; }
 }

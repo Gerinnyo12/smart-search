@@ -18,17 +18,19 @@ internal class CreateIndexRequestDescriptorFactory : IFactory<CreateIndexRequest
     {
         var indexDescriptor = new CreateIndexRequestDescriptor<ElasticDocument>(_indexOptions.IndexName);
         indexDescriptor
-            .Settings(i => i
+            .Settings(s => s
                 .NumberOfShards(_indexOptions.NumberOfShards)
                 .NumberOfReplicas(_indexOptions.NumberOfReplicas))
-                .Mappings(t => t.Properties(p => p
-                    .Keyword(d => d.Server)
-                    .Keyword(d => d.Database)
-                    .Keyword(d => d.Table)
-                    .Keyword(d => d.Type)
-                    .Keyword(d => d.Column)
-                    .Object(d => d.Keys, c => c.Enabled(false))
-                    .SearchAsYouType(d => d.Value)));
+                .Mappings(m => m.Properties(p => p
+                    .Keyword(k => k.Server)
+                    .Keyword(k => k.Database)
+                    .Keyword(k => k.Table)
+                    .Keyword(k => k.Type)
+                    .Keyword(k => k.Column)
+                    .Object(k => k.Keys, d => d.Enabled(false))
+                    .Text(t => t.Value, d => d
+                        .Fields(f => f
+                            .Keyword("Raw")))));
 
         return indexDescriptor;
     }

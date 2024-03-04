@@ -10,8 +10,8 @@
 <div class="max-height-flex-column">
     <div class="d-flex flex-row justify-content-between">
         <div class="form-group p-3">
-            <input type="search" class="form-control" autofocus placeholder="Puszedli" 
-                @bind="Filter" @oninput='(e) => UpdateFilterAsync(GetStringValue(e))' />
+            <input type="search" class="form-control" autofocus placeholder="Puszedli"
+                   @bind="Filter" @oninput='(e) => UpdateFilterAsync(GetStringValue(e))' />
         </div>
         <div class="p-3">
             @if (TotalCount == 10_000)
@@ -31,13 +31,13 @@
             <PropertyColumn Property="@(d => d.Type)" Sortable=true>
                 <ColumnOptions>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isFirst" @bind="IsFirst" 
-                            @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First.ToString(), (bool)e.Value!)">
+                        <input class="form-check-input" type="checkbox" id="isFirst" @bind="IsFirst"
+                               @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First.ToString(), (bool)e.Value!)">
                         <label class="form-check-label" for="isFirst">@TableType.First.ToString()</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isSecond" @bind="IsSecond" 
-                            @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second.ToString(), (bool)e.Value!)">
+                        <input class="form-check-input" type="checkbox" id="isSecond" @bind="IsSecond"
+                               @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second.ToString(), (bool)e.Value!)">
                         <label class="form-check-label" for="isSecond">@TableType.Second.ToString()</label>
                     </div>
                     <div class="form-check">

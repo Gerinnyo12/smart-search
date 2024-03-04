@@ -1,9 +1,9 @@
 ﻿namespace GriffSoft.SmartSearch.Logic.Dtos.Enums;
-public enum SearchMatchType
+public enum FilterMatchType
 {
-    SearchAsYouType,
+    BoolPrefix,
+    PhrasePrefix,
     Wildcard,
     Prefix,
-    Exact,
-    Numeric,
+    Term,
 }

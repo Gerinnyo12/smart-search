@@ -38,37 +38,39 @@ public partial class SmartSearch
         base.OnInitialized();
     }
 
-    private Task UpdateFilterAsync(string filter, SearchMatchType matchType = SearchMatchType.SearchAsYouType)
+    private Task UpdateFilterAsync(string fieldValue, FilterMatchType filterMatchType = FilterMatchType.BoolPrefix)
     {
         var searchFilter = new SearchFilter
         {
-            Filter = filter,
-            MatchType = matchType
+            FilterMatchType = filterMatchType,
+            FieldName = "Value",
+            FieldValue = fieldValue,
         };
 
-        SearchServiceProvider!.SearchFilter = searchFilter;
+        SearchServiceProvider!.SearchFilters[searchFilter.FieldName] = searchFilter;
         return Grid!.RefreshDataAsync();
     }
 
-    private Task UpdateAndAsync(string fieldName, string fieldValue, SearchMatchType matchType = SearchMatchType.Prefix)
+    private Task UpdateAndAsync(string fieldName, string fieldValue, AndMatchType andMatchType = AndMatchType.Prefix)
     {
         var searchAnd = new SearchAnd
         {
+            AndMatchType = andMatchType,
             FieldName = fieldName,
             FieldValue = fieldValue,
-            MatchType = matchType
         };
 
         SearchServiceProvider!.SearchAnds[searchAnd.FieldName] = searchAnd;
         return Grid!.RefreshDataAsync();
     }
 
-    private Task UpdateOrAsync(string fieldName, string type, bool fieldValue)
+    private Task UpdateOrAsync(string fieldName, string type, bool fieldValue, OrMatchType orMatchType = OrMatchType.Term)
     {
         if (fieldValue)
         {
             var searchOr = new SearchOr
             {
+                OrMatchType = orMatchType,
                 FieldName = fieldName,
                 FieldValue = type,
             };

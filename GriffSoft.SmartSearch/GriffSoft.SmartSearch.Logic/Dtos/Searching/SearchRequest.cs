@@ -3,7 +3,7 @@
 namespace GriffSoft.SmartSearch.Logic.Dtos.Searching;
 public class SearchRequest
 {
-    public SearchFilter Filters { get; set; } = default!;
+    public List<SearchFilter> Filters { get; set; } = new List<SearchFilter>();
 
     public List<SearchOr> Ors { get; set; } = new List<SearchOr>();
 
