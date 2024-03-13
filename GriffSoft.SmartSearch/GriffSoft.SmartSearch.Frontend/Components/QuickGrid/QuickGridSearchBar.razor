@@ -1,0 +1,27 @@
+﻿@using GriffSoft.SmartSearch.Logic.Dtos.Enums
+@inherits QuickGridComponent<FilterMatchType>
+
+<div class="input-group flex-nowrap p-3">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        @Value
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" @onclick="(e) => OnFilterChangedAsync(FilterMatchType.BoolPrefix)">BoolPrefix</a></li>
+        <li><a class="dropdown-item" href="#" @onclick="(e) => OnFilterChangedAsync(FilterMatchType.PhrasePrefix)">PhrasePrefix</a></li>
+        <li><a class="dropdown-item" href="#" @onclick="(e) => OnFilterChangedAsync(FilterMatchType.Wildcard)">Wildcard</a></li>
+        <li><a class="dropdown-item" href="#" @onclick="(e) => OnFilterChangedAsync(FilterMatchType.Prefix)">Prefix</a></li>
+        <li><a class="dropdown-item" href="#" @onclick="(e) => OnFilterChangedAsync(FilterMatchType.Term)">Term</a></li>
+    </ul>
+    <div class="form-floating">
+        <input type="search" class="form-control bg-dark text-white" id="searchGroup" autofocus placeholder="Keresés..."
+               @bind="_filter" @oninput="OnInputChangedAsync">
+        <label for="searchGroup">Keresés...</label>
+    </div>
+    <span class="input-group-text" id="addon-wrapping">
+        @if (TotalCount == 10_000)
+        {
+            <span>Több, mint&nbsp</span>
+        }
+        <strong>@TotalCount találat</strong>
+    </span>
+</div>

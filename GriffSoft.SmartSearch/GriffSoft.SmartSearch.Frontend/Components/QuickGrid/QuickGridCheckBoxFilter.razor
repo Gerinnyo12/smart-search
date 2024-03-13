@@ -1,0 +1,9 @@
+﻿@inherits QuickGridComponent<bool>
+
+@using GriffSoft.SmartSearch.Logic.Dtos.Enums
+
+<div class="form-check form-check-inline form-switch">
+    <input class="form-check-input" type="checkbox" id="@CheckBoxName"
+           checked="@Value" @oninput="OnCheckBoxChangedAsync" />
+    <label class="form-check-label" for="@CheckBoxName">@CheckBoxName</label>
+</div>

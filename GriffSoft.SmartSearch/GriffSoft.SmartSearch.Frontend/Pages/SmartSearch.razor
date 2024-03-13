@@ -1,86 +1,122 @@
 ﻿@page "/"
+@using GriffSoft.SmartSearch.Frontend.Components.QuickGrid
 @using GriffSoft.SmartSearch.Frontend.Providers
 @using GriffSoft.SmartSearch.Logic.Dtos
 @using GriffSoft.SmartSearch.Logic.Dtos.Enums
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using System.Text.Json
+@using SortDirection = Microsoft.AspNetCore.Components.QuickGrid.SortDirection
 
 <PageTitle>Smart Search</PageTitle>
 
 <div class="max-height-flex-column">
-    <div class="d-flex flex-row justify-content-between">
-        <div class="form-group p-3">
-            <input type="search" class="form-control" autofocus placeholder="Puszedli"
-                   @bind="Filter" @oninput='(e) => UpdateFilterAsync(GetStringValue(e))' />
-        </div>
-        <div class="p-3">
-            @if (TotalCount == 10_000)
-            {
-                <span>At least </span>
-            }
-            <strong>@TotalCount results found</strong>
-        </div>
-    </div>
+    <QuickGridSearchBar TotalCount="TotalCount"
+                        @bind-Value="FilterMatchType"
+                        @bind-Value:event="ValueChanged"
+                        OnValueChanged="(filter) => UpdateFilterAsync(filter, FilterMatchType)">
+    </QuickGridSearchBar>
 
     <div class="stretch grid ms-3" tabindex="-1">
-        <QuickGrid ItemsProvider="@ElasticDocumentsProvider" Virtualize="true" Theme="corporate" @ref=Grid>
-            <PropertyColumn Property="@(d => d.Value)" />
-            <TemplateColumn Title="@nameof(ElasticDocument.Keys)">
-                @GetKeyList(context.Keys)
+        <QuickGrid Class="table table-dark" ItemsProvider="@ElasticDocumentsProvider" Virtualize="true" Theme="custom" @ref=Grid>
+            <PropertyColumn Property="@(d => d.Value)" Title="Érték"/>
+
+            <TemplateColumn Title="Kulcsok">
+                @ListKeys(context.Keys)
             </TemplateColumn>
+
             <PropertyColumn Property="@(d => d.Type)" Sortable=true>
+                <HeaderTemplate>
+                    <QuickGridHeaderColumn Title="Típus"
+                                           SortDirection="GetColumnSortDirection(nameof(ElasticDocument.Type))"
+                                           OnSortClicked="() => UpdateSortAsync(context, nameof(ElasticDocument.Type))"
+                                           OnFilterClicked="() => Grid!.ShowColumnOptionsAsync(context)">
+                    </QuickGridHeaderColumn>
+                </HeaderTemplate>
                 <ColumnOptions>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isFirst" @bind="IsFirst"
-                               @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.First.ToString(), (bool)e.Value!)">
-                        <label class="form-check-label" for="isFirst">@TableType.First.ToString()</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isSecond" @bind="IsSecond"
-                               @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Second.ToString(), (bool)e.Value!)">
-                        <label class="form-check-label" for="isSecond">@TableType.Second.ToString()</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isThird" @bind="IsThird"
-                               @oninput="(e) => UpdateOrAsync(nameof(Type), TableType.Third.ToString(), (bool)e.Value!)">
-                        <label class="form-check-label" for="isThird">@TableType.Third.ToString()</label>
-                    </div>
+                    <QuickGridCheckBoxFilter CheckBoxName="Első típus"
+                                             @bind-Value="IsFirst"
+                                             @bind-Value:event="ValueChanged"
+                                             OnValueChanged="() => UpdateOrAsync(nameof(ElasticDocument.Type), nameof(TableType.First), IsFirst)">
+                    </QuickGridCheckBoxFilter>
+                    <QuickGridCheckBoxFilter CheckBoxName="Második típus"
+                                             @bind-Value="IsSecond"
+                                             @bind-Value:event="ValueChanged"
+                                             OnValueChanged="() => UpdateOrAsync(nameof(ElasticDocument.Type), nameof(TableType.Second), IsSecond)">
+                    </QuickGridCheckBoxFilter>
+                    <QuickGridCheckBoxFilter CheckBoxName="Harmadik típus"
+                                             @bind-Value="IsThird"
+                                             @bind-Value:event="ValueChanged"
+                                             OnValueChanged="() => UpdateOrAsync(nameof(ElasticDocument.Type), nameof(TableType.Third), IsThird)">
+                    </QuickGridCheckBoxFilter>
                 </ColumnOptions>
             </PropertyColumn>
-            <PropertyColumn Property="@(d => d.Server)" Sortable=true IsDefaultSortColumn=true>
+
+            <PropertyColumn Property="@(d => d.Server)" Sortable="true" IsDefaultSortColumn=true>
+                <HeaderTemplate>
+                    <QuickGridHeaderColumn Title="Szerver"
+                                           SortDirection="GetColumnSortDirection(nameof(ElasticDocument.Server))"
+                                           OnSortClicked="() => UpdateSortAsync(context, nameof(ElasticDocument.Server))"
+                                           OnFilterClicked="() => Grid!.ShowColumnOptionsAsync(context)">
+                    </QuickGridHeaderColumn>
+                </HeaderTemplate>
                 <ColumnOptions>
-                    <div class="form-group">
-                        <label for="server">Server Filter</label>
-                        <input type="search" class="form-control" id="server" placeholder="Server name..."
-                               @bind="Server" @oninput='(e) => UpdateAndAsync(nameof(Server), GetStringValue(e))' />
-                    </div>
+                    <QuickGridTextFilter LabelName="Szerver"
+                                         @bind-Value="Server"
+                                         @bind-Value:event="ValueChanged"
+                                         OnValueChanged="() => UpdateAndAsync(nameof(ElasticDocument.Server), Server)">
+                    </QuickGridTextFilter>
                 </ColumnOptions>
             </PropertyColumn>
-            <PropertyColumn Property="@(d => d.Database)" Sortable=true>
+
+            <PropertyColumn Property="@(d => d.Database)" Sortable="true">
+                <HeaderTemplate>
+                    <QuickGridHeaderColumn Title="Adatbázis"
+                                           SortDirection="GetColumnSortDirection(nameof(ElasticDocument.Database))"
+                                           OnSortClicked="() => UpdateSortAsync(context, nameof(ElasticDocument.Database))"
+                                           OnFilterClicked="() => Grid!.ShowColumnOptionsAsync(context)">
+                    </QuickGridHeaderColumn>
+                </HeaderTemplate>
                 <ColumnOptions>
-                    <div class="form-group">
-                        <label for="database">Database Filter</label>
-                        <input type="search" class="form-control" id="database" placeholder="Database name..."
-                               @bind="Database" @oninput='(e) => UpdateAndAsync(nameof(Database), GetStringValue(e))' />
-                    </div>
+                    <QuickGridTextFilter LabelName="Adatbázis"
+                                         @bind-Value="Database"
+                                         @bind-Value:event="ValueChanged"
+                                         OnValueChanged="() => UpdateAndAsync(nameof(ElasticDocument.Database), Database)">
+                    </QuickGridTextFilter>
                 </ColumnOptions>
             </PropertyColumn>
-            <PropertyColumn Property="@(d => d.Table)" Sortable=true>
+
+            <PropertyColumn Property="@(d => d.Table)" Sortable="true">
+                <HeaderTemplate>
+                    <QuickGridHeaderColumn Title="Tábla"
+                                           SortDirection="GetColumnSortDirection(nameof(ElasticDocument.Table))"
+                                           OnSortClicked="() => UpdateSortAsync(context, nameof(ElasticDocument.Table))"
+                                           OnFilterClicked="() => Grid!.ShowColumnOptionsAsync(context)">
+                    </QuickGridHeaderColumn>
+                </HeaderTemplate>
                 <ColumnOptions>
-                    <div class="form-group">
-                        <label for="table">Table Filter</label>
-                        <input type="search" class="form-control" id="table" placeholder="Table name..."
-                               @bind="Table" @oninput='(e) => UpdateAndAsync(nameof(Table), GetStringValue(e))' />
-                    </div>
+                    <QuickGridTextFilter LabelName="Tábla"
+                                         @bind-Value="Table"
+                                         @bind-Value:event="ValueChanged"
+                                         OnValueChanged="() => UpdateAndAsync(nameof(ElasticDocument.Table), Table)">
+                    </QuickGridTextFilter>
                 </ColumnOptions>
             </PropertyColumn>
-            <PropertyColumn Property="@(d => d.Column)" Sortable=true>
+
+
+            <PropertyColumn Property="@(d => d.Column)" Sortable="true">
+                <HeaderTemplate>
+                    <QuickGridHeaderColumn Title="Oszlop"
+                                           SortDirection="GetColumnSortDirection(nameof(ElasticDocument.Column))"
+                                           OnSortClicked="() => UpdateSortAsync(context, nameof(ElasticDocument.Column))"
+                                           OnFilterClicked="() => Grid!.ShowColumnOptionsAsync(context)">
+                    </QuickGridHeaderColumn>
+                </HeaderTemplate>
                 <ColumnOptions>
-                    <div class="form-group">
-                        <label for="column">Column Filter</label>
-                        <input type="search" class="form-control" id="column" placeholder="Column name..."
-                               @bind="Column" @oninput='(e) => UpdateAndAsync(nameof(Column), GetStringValue(e))' />
-                    </div>
+                    <QuickGridTextFilter LabelName="Oszlop"
+                                         @bind-Value="Column"
+                                         @bind-Value:event="ValueChanged"
+                                         OnValueChanged="() => UpdateAndAsync(nameof(ElasticDocument.Column), Column)">
+                    </QuickGridTextFilter>
                 </ColumnOptions>
             </PropertyColumn>
         </QuickGrid>
@@ -88,6 +124,8 @@
 </div>
 
 @code {
+    public FilterMatchType FilterMatchType = FilterMatchType.BoolPrefix;
+
     public string Filter { get; set; } = string.Empty;
 
     public string Server { get; set; } = string.Empty;
@@ -104,5 +142,44 @@
 
     public bool IsThird { get; set; } = false;
 
-    private string GetStringValue(ChangeEventArgs changeEventArgs) => changeEventArgs.Value?.ToString() ?? string.Empty;
+    public (string ColumnName, SortDirection SortDirection) CurrentSort { get; set; } = (nameof(ElasticDocument.Server), SortDirection.Ascending);
+
+    private static string ListKeys(Dictionary<string, object> keys)
+    {
+        var keyList = new List<string>();
+
+        foreach (var key in keys)
+        {
+            keyList.Add(key.Key + ": " + key.Value);
+        }
+
+        return string.Join(", ", keyList);
+    }
+
+    private SortDirection? GetColumnSortDirection(string columnName)
+    {
+        if (CurrentSort.ColumnName != columnName)
+        {
+            return default;
+        }
+
+        return CurrentSort.SortDirection;
+    }
+
+    private async Task UpdateSortAsync(ColumnBase<ElasticDocument> context, string sortColumn)
+    {
+        var inverseSortDirection = InvertSortDirection(CurrentSort.SortDirection);
+        CurrentSort = (sortColumn, inverseSortDirection);
+        await Grid!.SortByColumnAsync(context, inverseSortDirection);
+    }
+
+    private SortDirection InvertSortDirection(SortDirection sortDirection)
+    {
+        if (sortDirection == SortDirection.Ascending)
+        {
+            return SortDirection.Descending;
+        }
+
+        return SortDirection.Ascending;
+    }
 }

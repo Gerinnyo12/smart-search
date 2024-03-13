@@ -1,0 +1,7 @@
+﻿@inherits QuickGridComponent<string>
+
+<div class="form-floating">
+    <input type="search" class="form-control bg-dark text-white" id="@LabelName" placeholder="@LabelName filter..."
+           value="@Value" @oninput="OnInputChangedAsync">
+    <label for="@LabelName">@LabelName filter...</label>
+</div>

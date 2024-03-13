@@ -10,72 +10,41 @@
 
 .grid {
     overflow-y: auto;
-    outline: 1px solid white;
 }
-
-    .grid ::deep table {
-        width: 100%;
-    }
 
 ::deep thead {
     position: sticky;
     top: 0;
-    background-color: #212529;
-    color: white;
-    font-weight: bold;
-    outline: 2px solid white;
     z-index: 1;
 }
 
-::deep tr {
-    height: 2.5rem;
+::deep th:first-child {
+    width: 30%;
+}
+
+::deep th:nth-child(2) {
+    width: 20%;
+}
+
+::deep th:not(:first-child):not(:nth-child(2)) {
+    width: calc(50% / 5);
+    padding-bottom: 0;
 }
 
 ::deep td {
+    height: 2.5rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-::deep th:first-child {
-    width: 35%;
+::deep .quickgrid[theme=custom] td:first-child {
+    font-weight: bold;
 }
 
-::deep th:nth-child(2) {
-    width: 25%;
-}
-
-::deep th:not(:first-child):not(:nth-child(2)) {
-    width: calc(40% / 5);
-}
-
-::deep tr:nth-child(odd) {
-    background: #343a40;
-}
-
-::deep .quickgrid[theme=corporate] {
-    font-family: 'Times New Roman', serif;
-}
-
-    ::deep .quickgrid[theme=corporate] .col-title {
-        gap: 5px;
-        text-transform: capitalize;
-    }
-
-    ::deep .quickgrid[theme=corporate] button.col-title:hover, ::deep .quickgrid[theme=corporate] .col-options-button:hover {
-        background-color: #212529;
-    }
-
-    ::deep .quickgrid[theme=corporate] .col-options-button {
-        margin-right: 5px;
-    }
-
-.grid ::deep .col-options-button {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>');
-}
-
-::deep .quickgrid[theme=corporate] .col-options {
-    min-width: 200px;
+::deep .quickgrid[theme=custom] .col-options {
+    min-width: 250px;
     color: white;
     background-color: #212529;
+    font-weight: normal;
 }

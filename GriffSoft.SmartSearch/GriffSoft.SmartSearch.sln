@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Front
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.Database", "GriffSoft.SmartSearch.Database\GriffSoft.SmartSearch.Database.csproj", "{C0FE3EBE-34C5-4FCE-B2B4-4C10F442A072}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GriffSoft.SmartSearch.ChangeTracker", "GriffSoft.SmartSearch.ChangeTracker\GriffSoft.SmartSearch.ChangeTracker.csproj", "{C41992A9-A708-45E7-8C27-8D493CA01282}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GriffSoft.SmartSearch.ChangeTracker", "GriffSoft.SmartSearch.ChangeTracker\GriffSoft.SmartSearch.ChangeTracker.csproj", "{C41992A9-A708-45E7-8C27-8D493CA01282}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

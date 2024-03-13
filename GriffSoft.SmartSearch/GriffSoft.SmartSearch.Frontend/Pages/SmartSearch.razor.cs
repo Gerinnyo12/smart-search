@@ -38,7 +38,7 @@ public partial class SmartSearch
         base.OnInitialized();
     }
 
-    private Task UpdateFilterAsync(string fieldValue, FilterMatchType filterMatchType = FilterMatchType.BoolPrefix)
+    private Task UpdateFilterAsync(string fieldValue, FilterMatchType filterMatchType)
     {
         var searchFilter = new SearchFilter
         {
@@ -51,11 +51,11 @@ public partial class SmartSearch
         return Grid!.RefreshDataAsync();
     }
 
-    private Task UpdateAndAsync(string fieldName, string fieldValue, AndMatchType andMatchType = AndMatchType.Prefix)
+    private Task UpdateAndAsync(string fieldName, string fieldValue)
     {
         var searchAnd = new SearchAnd
         {
-            AndMatchType = andMatchType,
+            AndMatchType = AndMatchType.Prefix,
             FieldName = fieldName,
             FieldValue = fieldValue,
         };
@@ -64,13 +64,13 @@ public partial class SmartSearch
         return Grid!.RefreshDataAsync();
     }
 
-    private Task UpdateOrAsync(string fieldName, string type, bool fieldValue, OrMatchType orMatchType = OrMatchType.Term)
+    private Task UpdateOrAsync(string fieldName, string type, bool fieldValue)
     {
         if (fieldValue)
         {
             var searchOr = new SearchOr
             {
-                OrMatchType = orMatchType,
+                OrMatchType = OrMatchType.Term,
                 FieldName = fieldName,
                 FieldValue = type,
             };
@@ -83,17 +83,5 @@ public partial class SmartSearch
         }
 
         return Grid!.RefreshDataAsync();
-    }
-
-    private static string GetKeyList(Dictionary<string, object> keys)
-    {
-        var keyList = new List<string>();
-
-        foreach (var key in keys)
-        {
-            keyList.Add(key.Key + ": " + key.Value);
-        }
-
-        return string.Join(", ", keyList);
     }
 }

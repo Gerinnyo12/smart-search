@@ -42,7 +42,7 @@ public class SearchServiceProvider(ISearchService<ElasticDocument> elasticsearch
             .Ands(searchAnds)
             .Ors(searchOrs)
             .Sorts(searchSorts)
-            .Take(request.Count ?? 25)
+            .Take(request.Count ?? 20)
             .Skip(request.StartIndex)
             .Build();
 
