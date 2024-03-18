@@ -16,6 +16,7 @@ public class SqlBatchUpsertQueryFactory : SqlBatchQueryFactory
         "   FROM {3} " +
         "   FOR SYSTEM_TIME " +
         "   BETWEEN {4} AND {5} " +
+        "   WITH (NOLOCK)" +
         ") a " +
         "WHERE RowNumber = 1 " +
         "AND ValidFrom > {6} " +

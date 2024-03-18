@@ -9,6 +9,7 @@ public class SqlBatchFetchQueryFactory : SqlBatchQueryFactory
     private const string SqlQuery =
         "SELECT {0} " +
         "FROM {1} " +
+        "WITH (NOLOCK) " +
         "ORDER BY {2} " +
         "OFFSET {3} ROWS " +
         "FETCH NEXT {4} ROWS ONLY;";
