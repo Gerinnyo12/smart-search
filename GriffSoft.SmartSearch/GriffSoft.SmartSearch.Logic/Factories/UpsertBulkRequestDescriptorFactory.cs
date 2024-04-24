@@ -18,8 +18,8 @@ internal class UpsertBulkRequestDescriptorFactory : IFactory<BulkRequestDescript
     public BulkRequestDescriptor Create()
     {
         var bulkRequestDescriptor = new BulkRequestDescriptor();
-        bulkRequestDescriptor.IndexMany(_documents, (descriptor, document) => descriptor
-            .Id(CreateId(document)));
+        bulkRequestDescriptor.IndexMany(_documents, 
+            (descriptor, document) => descriptor.Id(CreateId(document)));
 
         return bulkRequestDescriptor;
     }

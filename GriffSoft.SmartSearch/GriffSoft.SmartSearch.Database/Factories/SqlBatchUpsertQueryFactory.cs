@@ -40,8 +40,8 @@ public class SqlBatchUpsertQueryFactory : SqlBatchQueryFactory
         string bracketisedTableName = _sqlUpsertQueryDto.Table.Bracketise();
         string quotisedIntervalStartDate = _sqlUpsertQueryDto.LastSyncDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff").Quotise();
         string quotisedIntervalEndDate = _sqlUpsertQueryDto.CurrentSyncDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff").Quotise();
-        int offset = _sqlUpsertQueryDto.BatchSize * _batchCount;
         int batchSize = _sqlUpsertQueryDto.BatchSize / _sqlUpsertQueryDto.Columns.Length;
+        int offset = batchSize * _batchCount;
 
         return string.Format(SqlQuery,
             bracketisedColumnNames,

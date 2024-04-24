@@ -21,10 +21,10 @@ public class ElasticBulkOperationService
     private readonly ILogger<ElasticBulkOperationService> _logger;
 
     public ElasticBulkOperationService(ElasticsearchClientProvider elasticsearchClientProvider,
-        IOptions<IndexOptions> indexOptions, ILogger<ElasticBulkOperationService> logger)
+        IOptions<ElasticsearchClientOptions> elasticsearchClientOptions, ILogger<ElasticBulkOperationService> logger)
     {
         _elasticsearchClientProvider = elasticsearchClientProvider;
-        _indexOptions = indexOptions.Value;
+        _indexOptions = elasticsearchClientOptions.Value.IndexOptions;
         _logger = logger;
     }
 

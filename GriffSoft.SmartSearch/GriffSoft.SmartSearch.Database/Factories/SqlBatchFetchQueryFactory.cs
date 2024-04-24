@@ -26,8 +26,8 @@ public class SqlBatchFetchQueryFactory : SqlBatchQueryFactory
         string bracketisedColumnNames = string.Join(", ", _sqlBatchFetchQueryDto.Keys.Union(_sqlBatchFetchQueryDto.Columns).Select(s => s.Bracketise()));
         string bracketisedKeyNames = string.Join(", ", _sqlBatchFetchQueryDto.Keys.Select(s => s.Bracketise()));
         string bracketisedTableName = _sqlBatchFetchQueryDto.Table.Bracketise();
-        int offset = _sqlBatchFetchQueryDto.BatchSize * _batchCount;
         int batchSize = _sqlBatchFetchQueryDto.BatchSize / _sqlBatchFetchQueryDto.Columns.Length;
+        int offset = batchSize * _batchCount;
 
         return string.Format(SqlQuery,
             bracketisedColumnNames,

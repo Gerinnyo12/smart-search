@@ -41,8 +41,8 @@ public class SqlBatchDeleteQueryFactory : SqlBatchQueryFactory
         string quotisedIntervalStartDate = _sqlDeleteQueryDto.LastSyncDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff").Quotise();
         string quotisedIntervalEndDate = _sqlDeleteQueryDto.CurrentSyncDate.ToString("yyyy-MM-dd HH:mm:ss.fffffff").Quotise();
         string quotiesedLastSyncDate = _sqlDeleteQueryDto.LastSyncDate > DateTime.MinValue ? quotisedIntervalStartDate : quotisedIntervalEndDate;
-        int offset = _sqlDeleteQueryDto.BatchSize * _batchCount;
         int batchSize = _sqlDeleteQueryDto.BatchSize / _sqlDeleteQueryDto.Columns.Length;
+        int offset = batchSize * _batchCount;
 
         return string.Format(SqlQuery,
             bracketisedColumnNames,

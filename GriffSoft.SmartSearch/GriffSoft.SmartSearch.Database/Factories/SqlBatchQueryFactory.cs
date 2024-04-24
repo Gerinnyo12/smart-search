@@ -15,7 +15,7 @@ public abstract class SqlBatchQueryFactory : IBatchQueryFactory<SqlCommand>
         _sqlQueryDto = sqlQueryDto;
     }
 
-    public virtual async Task<SqlCommand> CreateNextAsync()
+    public async Task<SqlCommand> CreateNextAsync()
     {
         string paramaterisedSqlQuery = GetParamaterisedSqlQuery();
         var sqlConnection = await _sqlQueryDto.SqlConnector.Connection;
