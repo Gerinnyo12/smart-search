@@ -12,10 +12,6 @@ using System.Threading.Tasks;
 using SearchRequest = GriffSoft.SmartSearch.Logic.Dtos.Searching.SearchRequest;
 
 namespace GriffSoft.SmartSearch.Logic.Services.Searching;
-/// <summary>
-/// TODO
-/// </summary>
-/// <remarks>Has to be singleton</remarks>
 public class ElasticSearchService : ISearchService<ElasticDocument>
 {
     private readonly ElasticsearchClientProvider _elasticsearchClientProvider;
